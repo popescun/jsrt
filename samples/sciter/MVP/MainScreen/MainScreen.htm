@@ -1,0 +1,42 @@
+<html window-blurbehind="dark">
+  <head>
+
+    <title>Main</title>
+
+    <style>
+      html
+      {
+        background-color:green;
+      }
+
+      body
+      {
+        margin: 0 0 0 0;
+        background-color:yellow;
+        /*border: 1px dashed;
+        border-color: white;*/
+      }
+
+      div#screen
+      {
+        background-color:red;
+        border: 1px dashed;
+        border-color: white;
+      }
+
+    </style>
+
+    <script type="text/tiscript">
+      include "MainPresenter.tis";
+      MainPresenter(self#screen);
+    </script>
+
+  </head>
+
+  <body>
+    <div #screen>
+        <button #firstScreen>FirstScreen</button>
+    </div>
+  </body>
+
+</html>

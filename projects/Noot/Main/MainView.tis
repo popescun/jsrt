@@ -1,0 +1,60 @@
+//var scriptDir = view.getDirName("app_pi");
+include view.GetModulesDirectory("app_api") + "/jsrt_modules/js/sciter/View.tis";
+class MainView : Element {
+  function attached {
+    debug: "MainElement.attached...";
+    View();
+  }
+}
+
+class SaveButtonElement : Element {
+  function attached {
+    debug: "SaveButtonElement.attached...";
+    SaveButtonElement.that = this;
+    this.attributes["style"] = "visibility: hidden";
+  }
+
+  function flipflop() {
+    //debug log: "flipflop";
+    this.state.expanded = !this.state.expanded;
+  }
+
+  function start() {
+    //debug log: "twinkle start";
+    this.state.expanded = true; // triggers transition/animation
+    this.on("animationend.twinkle", flipflop );
+  }
+
+  function stop() {
+    this.state.expanded = false;
+    this.off("animationend.twinkle");
+  }
+
+  event click {
+    view.save_button_click("sciter_main");
+  }
+
+  function updateEditState(state) {
+    debug: "SaveButtonElement.updateEditState...", state;
+    if (state) {
+      if (SaveButtonElement.that.attributes["style"] == "visibility: hidden") {
+        SaveButtonElement.that.attributes["style"] = "visibility: visible";
+        SaveButtonElement.that.start();
+      }
+    } else {
+      SaveButtonElement.that.attributes["style"] = "visibility: hidden";
+      SaveButtonElement.that.stop();
+    }
+  }
+}
+
+class MenuSlide : Element {
+  function attached {
+    debug: "MenuSlide.attached...";
+  }
+
+  event click {
+    // debug: "MenuSlide.click...";
+    view.slide_menu("sciter_main");
+  }
+}

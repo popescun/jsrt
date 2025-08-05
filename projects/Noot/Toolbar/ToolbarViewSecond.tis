@@ -1,0 +1,131 @@
+// todo: check if this can be loaded by sciter native object
+
+class ToolbarViewSecond : Element {
+  function attached() {
+    debug: "ToolbarViewSecond.attached...";
+    this.load(this.url("../Toolbar/ToolbarViewSecond.htm"));
+  }
+
+  function slide_menu(source) {
+    debug: "ToolbarViewSecond.slide_menu...";
+    debug: source;
+    if (source == "BUTTON_SLIDE" && !$(div.toolbar_second).state.checked) {
+      return;
+    }
+    $(div.toolbar_second).state.checked = !$(div.toolbar_second).state.checked;
+  }
+
+  function onMouse(event) {
+    switch(event.type) {
+      case Event.SINKING | Event.MOUSE_CLICK:
+        //debug: event.target.html;
+        slide_menu("TOOLBAR_SECOND");
+        break;
+    }
+  }
+
+  event click $(button.format_remove)(event) {
+    debug: "ToolbarViewSecond.button_format_remove.click...";
+    view.popup_remove_click("sciter_toolbar");
+  }
+
+  event click $(button.format_bold)(event) {
+    debug: "ToolbarViewSecond.button_format_bold.click...";
+    view.popup_bold_click("sciter_toolbar");
+  }
+
+  event click $(button.format_italic)(event) {
+    debug: "ToolbarViewSecond.button_format_italic.click...";
+    view.popup_emphasis_click("sciter_toolbar");
+  }
+
+  event click $(button.format_superscript)(event) {
+    debug: "ToolbarViewSecond.button_format_superscript.click...";
+    view.popup_sup_click("sciter_toolbar");
+  }
+
+  event click $(button.format_subscript)(event) {
+    debug: "ToolbarViewSecond.button_format_subscript.click...";
+    view.popup_sub_click("sciter_toolbar");
+  }
+
+  event click $(button.format_underline)(event) {
+    debug: "ToolbarViewSecond.button_format_underline.click...";
+    view.popup_underline_click("sciter_toolbar");
+  }
+
+  event click $(button.format_delete)(event) {
+    debug: "ToolbarViewSecond.button_format_delete.click...";
+    view.popup_del_click("sciter_toolbar");
+  }
+
+  event click $(button.paragraph_normal)(event) {
+    debug: "ToolbarViewSecond.button_paragraph_normal.click...";
+    view.popup_paragraph_click("sciter_toolbar", 0);
+  }
+
+  event click $(button.paragraph_div)(event) {
+    debug: "ToolbarViewSecond.button_paragraph_div.click...";
+    view.popup_paragraph_click("sciter_toolbar", 1);
+  }
+
+  event click $(button.paragraph_h1)(event) {
+    debug: "ToolbarViewSecond.button_paragraph_h1.click...";
+    view.popup_paragraph_click("sciter_toolbar", 2);
+  }
+
+  event click $(button.paragraph_h2)(event) {
+    debug: "ToolbarViewSecond.button_paragraph_h2.click...";
+    view.popup_paragraph_click("sciter_toolbar", 3);
+  }
+
+  event click $(button.paragraph_h3)(event) {
+    debug: "ToolbarViewSecond.button_paragraph_h3.click...";
+    view.popup_paragraph_click("sciter_toolbar", 4);
+  }
+
+  event click $(button.paragraph_h4)(event) {
+    debug: "ToolbarViewSecond.button_paragraph_h4.click...";
+    view.popup_paragraph_click("sciter_toolbar", 5);
+  }
+
+  event click $(button.paragraph_h5)(event) {
+    debug: "ToolbarViewSecond.button_paragraph_h5.click...";
+    view.popup_paragraph_click("sciter_toolbar", 5);
+  }
+
+  event click $(button.orderlist)(event) {
+    debug: "ToolbarViewSecond.button.orderlist.click...";
+    view.button_orderlist_click("sciter_toolbar");
+  }
+
+  event click $(button.unorderlist)(event) {
+    debug: "ToolbarViewSecond.button.unorderlist.click...";
+    view.button_unorderlist_click("sciter_toolbar");
+  }
+
+  event click $(button.checklist) {
+    debug: "ToolbarViewSecond.button.checklist.click...";
+    view.button_checklist_click("sciter_toolbar");
+  }
+
+  event click $(button.definitionlist) {
+    debug: "ToolbarViewSecond.button.definitionlist.click...";
+    view.button_definitionlist_click("sciter_toolbar");
+  }
+
+  event click $(button.blockquote) {
+    debug: "ToolbarViewSecond.button.blockquotes.click...";
+    view.button_blockquote_click("sciter_toolbar");
+  }
+
+  event click $(button.preformatted) {
+    debug: "ToolbarViewSecond.button.preformatted.click...";s
+    view.button_preformatted_click("sciter_toolbar");
+  }
+
+  event click $(button.image) {
+    //debug: "button.image.click...";
+    view.button_image_click("sciter_toolbar");
+  }
+}

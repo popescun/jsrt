@@ -1,0 +1,136 @@
+@mixin CHECK-SIZE {
+  background-color: red;
+  border: 1px dashed;
+  border-color: white;
+}
+
+body {
+  flow: stack;
+  margin: 0px;
+  padding: 0px;
+}
+
+div.main {
+  display: block;
+  size: *;
+}
+
+div.main > frameset > splitter {
+  background: #1e1e1e;
+  hit-margin: 2dip;
+  width: 0dip;
+  height: *;
+}
+
+overlay.slide_menu
+{
+  display: block;
+  prototype: MenuSlide url("../Main/MainView.tis");
+  background: none;
+  width: 18dip;
+  height: 18dip;
+  margin-top: 3dip;
+  margin-left:*;
+  margin-right: 4dip;
+  padding: 2dip;
+  color: #555;
+  fill: #ccc;
+  stroke: none;
+  foreground-position-top: 3dip;
+  foreground-position-left: 3dip;
+  foreground-repeat: no-repeat;
+  foreground-size: 16dip 14dip;
+  foreground-image: url(path:M 3 7 A 1.0001 1.0001 0 1 0 3 9 L 27 9 A 1.0001 1.0001 0 1 0 27 7 L 3 7 z M 3 14 A 1.0001 1.0001 0 1 0 3 16 L 27 16 A 1.0001 1.0001 0 1 0 27 14 L 3 14 z M 3 21 A 1.0001 1.0001 0 1 0 3 23 L 27 23 A 1.0001 1.0001 0 1 0 27 21 L 3 21 z);
+}
+
+overlay.slide_menu:hover {
+  fill: highlight;
+}
+
+overlay.save_file
+{
+  display: block;
+  size: *;
+  border-radius:10dip;
+  width: 4em;
+  height: 4em;
+  margin-top:1*;
+  margin-bottom:2em;
+  margin-left:1*;
+  margin-right:2em;
+  //visibility: hidden;
+  //@CHECK-SIZE;
+}
+
+overlay.save_file > button.save_file {
+  display: block;
+  prototype: SaveButtonElement url("../Main/MainView.tis");
+  transform:scale(1);
+  transition:transform sine-in-out 1200ms;
+  size: *;
+  color: #555;
+  fill: #ccc;
+  stroke: none;
+  background: none;
+  border: none;
+  //visibility: hidden;
+  foreground-position-top: 7dip;
+  foreground-position-left: 7dip;
+  foreground-repeat: no-repeat;
+  foreground-size: 40dip 40dip;
+  foreground-image: url(path:M 5 3 C 3.9 3 3 3.9 3 5 L 3 19 C 3 20.1 3.9 21 5 21 L 19 21 C 20.1 21 21 20.1 21 19 L 21 6 L 18 3 L 5 3 z M 8 4 L 16 4 L 16 9 L 8 9 L 8 4 z M 13 5 L 13 8 L 15 8 L 15 5 L 13 5 z M 7 12 L 17 12 C 17.6 12 18 12.4 18 13 L 18 18 C 18 18.6 17.6 19 17 19 L 7 19 C 6.4 19 6 18.6 6 18 L 6 13 C 6 12.4 6.4 12 7 12 z);
+}
+
+overlay.save_file > button.save_file:expanded { transform: scale(1.2);  }
+
+/*overlay.save_file > button.save_file {
+  display: block;
+  size: *;
+  color: #555;
+  fill: #ccc;
+  stroke: none;
+  background: none;
+  border: none;
+  foreground-position-top: 7dip;
+  foreground-position-left: 7dip;
+  foreground-repeat: no-repeat;
+  foreground-size: 40dip 40dip;
+  foreground-image: url(path:M 5 3 C 3.9 3 3 3.9 3 5 L 3 19 C 3 20.1 3.9 21 5 21 L 19 21 C 20.1 21 21 20.1 21 19 L 21 6 L 18 3 L 5 3 z M 8 4 L 16 4 L 16 9 L 8 9 L 8 4 z M 13 5 L 13 8 L 15 8 L 15 5 L 13 5 z M 7 12 L 17 12 C 17.6 12 18 12.4 18 13 L 18 18 C 18 18.6 17.6 19 17 19 L 7 19 C 6.4 19 6 18.6 6 18 L 6 13 C 6 12.4 6.4 12 7 12 z);
+}*/
+
+overlay.save_file > button.save_file:hover {
+  fill: highlight;
+}
+
+/*main > frameset >splitter:hover {
+  //background-color: rgba(1, 0, 0, 80%);
+  width: 2dip;
+  height: *;
+}*/
+
+/* Tooltip text */
+popup#dyn-tooltip {
+  display: block;
+  width:max-content;
+  background-color: black;
+  color: #fff;
+  text-align: left;
+  padding: 4px 0;
+}
+
+@mixin HEADER-BAND {
+  display: block;
+  flow: horizontal;
+  height:28dip;
+  background: #3c3b37;
+  //border-bottom:1px solid #ccc;
+  padding: 2dip;
+}
+
+@import url(ToolbarView.css);
+@import url(NoteView.css);
+@import url(Filebrowser.css);
+
+div.main {
+  prototype: MainView url("../Main/MainView.tis");
+}

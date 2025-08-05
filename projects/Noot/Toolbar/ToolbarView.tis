@@ -1,0 +1,211 @@
+// todo: check if this can be loaded by sciter native object
+
+class ToolbarView : Element {
+  function attached() {
+    debug: "ToolbarView.attached...";
+    this.load(this.url("../Toolbar/ToolbarView.htm"));
+
+    $(button.save_file).state.disabled = true;
+    $(button.source).state.disabled = true;
+  }
+
+  event click $(button.new_file) {
+    //debug: "button.new_file.click...";
+    view.button_new_file_click("sciter_toolbar");
+    //$(div.htmlarea).loadBlank();
+  }
+
+  event click $(button.open_file) {
+    //debug: "button.open_file.click...";
+    view.button_open_file_click("sciter_toolbar");
+  }
+
+  event click $(button.open_folder) {
+    //debug: "button.open_folder.click...";
+    view.button_open_folder_click("sciter_toolbar");
+  }
+
+  event click $(button.save_file) {
+    //debug: "button.save_file.click...";
+    view.button_save_file_click("sciter_toolbar");
+  }
+
+  event click $(button.image) {
+    //debug: "button.image.click...";
+    view.button_image_click("sciter_toolbar");
+  }
+
+  event click $(li.remove) {
+    //debug: "li.remove.click...";
+    view.popup_remove_click("sciter_toolbar");
+  }
+
+  event click $(button.tools) {
+    debug: "button.tools.click...";
+    view.button_tools_click("sciter_toolbar", "BUTTON_TOOLS");
+  }
+
+  event click $(button.source) {
+    debug: "button.source.click...";
+    view.button_source_click("sciter_toolbar");
+  }
+
+  // example how to select child element using ancestors
+  event click $(button.format > menu.popup > li.strong) {
+    //debug: "li.strong...";
+    view.popup_bold_click("sciter_toolbar");
+  }
+
+  event click $(li.em) {
+    //debug: "li.em...";
+    view.popup_emphasis_click("sciter_toolbar");
+  }
+
+  event click $(li.sup) {
+    //debug: "li.sup...";
+    view.popup_sup_click("sciter_toolbar");
+  }
+
+  event click $(li.sub) {
+    //debug: "li.sub...";
+    view.popup_sub_click("sciter_toolbar");
+  }
+
+  event click $(li.underline) {
+    //debug: "li.underline...";
+    view.popup_underline_click("sciter_toolbar");
+  }
+
+  event click $(li.del) {
+    //debug: "li.del...";
+    view.popup_del_click("sciter_toolbar");
+  }
+
+  event click $(button.paragraph > menu.popup > li)(evt, selElement) {
+    //debug: "button.paragraph...";
+    //debug: selElement.index;
+    view.popup_paragraph_click("sciter_toolbar", selElement.index);
+  }
+
+  event click $(button.orderlist) {
+    view.button_orderlist_click("sciter_toolbar");
+  }
+
+  event click $(button.unorderlist) {
+    view.button_unorderlist_click("sciter_toolbar");
+  }
+
+  event click $(button.checklist) {
+    view.button_checklist_click("sciter_toolbar");
+  }
+
+  event click $(button.definitionlist) {
+    view.button_definitionlist_click("sciter_toolbar");
+  }
+
+  event click $(button.blockquote) {
+    view.button_blockquote_click("sciter_toolbar");
+  }
+
+  event click $(button.preformatted) {
+    view.button_preformatted_click("sciter_toolbar");
+  }
+
+  function updateEditState(state, reason) {
+    //debug: "ToolbarView.updateEditState...";
+    debug: reason;
+    $(button.save_file).state.disabled = !state;
+    if (reason && reason.toString() == "NO_DOCUMENT") {
+      $(button.source).state.disabled = true;
+    } else {
+      $(button.source).state.disabled = false;
+    }
+  }
+
+  function slide_menu() {
+    //debug: "ToolbarView.slide_menu...";
+    view.button_tools_click("sciter_toolbar", "BUTTON_SLIDE");
+    $(div.toolbar).state.checked = !$(div.toolbar).state.checked;
+  }
+
+  function ButtonTableSelector()
+  {
+      const DEF_TABLE_COLS = 8;
+      const DEF_TABLE_ROWS = 5;
+
+      var me = this;
+
+      var selTableCol = -1;
+      var selTableRow = -1;
+
+      const tableStyle = "<header><label>table width:</label><div><button|radio(tablewidth) value='auto' checked>auto</button>"
+                                            "<button|radio(tablewidth) value='full'>100%</button></div>"
+                        "<label>headers:</label><div><button|checkbox(rowHeaders) value='1'>row</button>"
+                                        "<button|checkbox(columnHeaders) value='1'>column</button></div></header>";
+        // initialization
+      var tableGrid = "<table><tbody>";
+        for( var r in DEF_TABLE_ROWS ) {
+          tableGrid += "<tr>";
+          for( var c in DEF_TABLE_COLS )
+            tableGrid += "<td/>";
+          tableGrid += "</tr>";
+        }
+      tableGrid += "</tbody></table>";
+
+      this.append("<popup>" + tableStyle + tableGrid + "</popup>" );
+
+      var popup = this.$(popup);
+      var table = popup.$(table>tbody);
+      var header = popup.$(header);
+
+      function setSelection(R = -1,C = -1) {
+        if( C == selTableCol && R == selTableRow )
+          return;
+        for( var r in DEF_TABLE_ROWS )
+          for( var c in DEF_TABLE_COLS )
+                table[r][c].attributes.toggleClass("selected", r <= R && c <= C );
+        selTableCol = C;
+        selTableRow = R;
+      }
+
+      table << event mousemove (evt)
+      {
+        var td = evt.target.$p(td);
+        if( !td ) return;
+        var C = td.index;
+        var R = td.parent.index;
+        setSelection(R,C);
+      }
+
+      table << event mouseleave {
+        setSelection();
+      }
+
+      table << event click $(td)
+      {
+        var C = this.index;
+        var R = this.parent.index;
+
+        var params = header.value;
+        var autoWidth = params.tablewidth == "auto";
+
+        /*NoteView.current.htmlarea.execCommand("insert-table",
+        {
+          rows: R + 1,
+          columns: C + 1,
+          autoWidth: autoWidth,
+          rowHeaders: params.rowHeaders || 0,
+          columnHeaders: params.columnHeaders || 0
+        });*/
+
+        view.insert_table("sciter_toolbar", R + 1, C + 1, autoWidth, params.rowHeaders || 0, params.columnHeaders || 0);
+
+        popup.state.popup = false; // closing it
+        return true; // handled
+      }
+
+      // binding event handlers to this [button]
+      this << event popupready { setSelection(); }
+      this << event click { this.popup(popup); }
+  }
+}

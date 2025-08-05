@@ -1,0 +1,508 @@
+include "dom.tis"
+
+class NoteView : Element {
+  function attached() {
+    debug: "NoteView.attached...";
+    //this.$content(<include src="../Note/NoteView.htm" />"); // another way to load other element
+    this.load(this.url("../Note/NoteView.htm"));
+  }
+}
+
+class DivTabs : Element {
+  class ActiveDocument {
+    var name;
+    var filePath;
+  }
+
+  var activeDocument;
+
+  function attached() {
+    debug: "DivTabs.attached...";
+    this.loadEmptyTabs();
+    activeDocument = new ActiveDocument();
+  }
+
+  function updateActiveDocument(name, filePath) {
+    debug: "DivTabs.updateActiveDocument...";
+    activeDocument.name = name;
+    activeDocument.filePath = filePath;
+    view.updateActiveDocument("sciter_note", name, filePath);
+  }
+
+  /*function loadBlank() {
+    //this.$content(<p></p>); // for some reason a <text> elem is inserted instead of <p>
+                              // more <p> elements appear correct
+    this.load(this.url("../Note/htmlarea-blank.htm"));
+    $(htmlarea).state.focus = true;
+  }*/
+
+  /*event click $(label) (evt, element) {
+    debug: "label.click...";
+  }*/
+
+  event change $(tabs > frameset > htmlarea) (evt, element) {
+    //debug: "DivTabs.changed...";
+    //debug: this.html;
+    //debug: this.selection.caret;
+    //debug: evt.reason;
+    //debug: $(tabs.notes).currentTab.select('htmlarea').html;
+    debug: element.text;
+    var plaintext = $(tabs.notes).currentTab.select('plaintext');
+    if (plaintext) {
+      plaintext.text = element.html;
+    }
+    view.updateEditState("sciter_note", true, activeDocument.name, activeDocument.filePath);
+  }
+
+  event change $(tabs > frameset > plaintext) (evt, element) {
+    //debug: element.text;
+    $(tabs.notes).currentTab.select('htmlarea').html = element.text;
+  }
+
+  // handled in Tab.tis onMouse event that looks more reliable
+  /*event click $(span.close) (evt, element) {
+    debug: "span.close.click...";
+    //debug: element.parent.attributes["for"];
+    var forName = element.parent.attributes["for"];
+    var panel = $(tabs.notes).getPanel(forName);
+    if (panel) {
+      //debug: panel.select('htmlarea').html;
+      element.parent.detach(); // tab label
+      panel.detach(); // tab section
+    }
+  }*/
+
+  // UI updaters (invoked by presenter)
+  function insertImage(imagePath) {
+    debug: "DivTabs.insertImage...";
+    //debug: imagePath;
+    insertImageImpl(imagePath);
+  }
+
+  function newFile(fileName, filePath) {
+    debug: "DivTabs.newFile...";
+    debug: fileName, filePath;
+    try {
+      createTab(fileName, filePath, null, true);
+    } catch(ex) {
+      return false;
+    }
+    return true;
+  }
+
+  function saveNewDocuments() {
+    debug: "DivTabs.saveNewDocuments...";
+    // request new documents names from store
+    view.requestNewDocuments("sciter_note");
+  }
+
+  function onRequestNewDocuments(documents) {
+      debug: "DivTabs.onRequestNewDocuments...";
+      for (var document in documents) {
+        //debug: document.fileName.toString();
+        var panel = $(tabs.notes).getPanel(document.filePath.toString());
+        if (panel) {
+          //debug: panel.select('htmlarea').html;
+          view.saveNewDocument("sciter_note", document.fileName.toString(), panel.select('htmlarea').html);
+        }
+      }
+  }
+
+  function updateDocument(fileName, filePath, html, untitled) {
+    debug: "DivTabs.updateDocument...";
+    try {
+      createTab(fileName, filePath, html, untitled);
+    } catch(ex) {
+      return false;
+    }
+    return true;
+  }
+
+  function getActiveDocument() {
+    debug: "DivTabs.getActiveDocument...";
+    var name = "", path = "", html = "";
+    var label = $(tabs.notes).currentLabel;
+    if (label) {
+      name = label.attributes["for"];
+      path = label.attributes["filePath"];
+      //debug: name, path;
+    }
+
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      html = tab.select('htmlarea').html;
+      //debug: html;
+    }
+    return {name: name, path: path, html: html};
+  }
+
+  function closeActiveDocument() {
+    debug: "DivTabs.closeActiveDocument...";
+    var label = $(tabs.notes).currentLabel;
+    var tab = $(tabs.notes).currentTab;
+
+    var firstLabel, secondLabel;
+    if (label) {
+      firstLabel = label.parent.first ? label.parent.first : null;
+      secondLabel = firstLabel.next;
+      //if(firstLabel) debug: firstLabel.attributes["for"];
+      //if(secondLabel)  debug: secondLabel.attributes["for"];
+    }
+
+    if (label) label.detach();
+    if (tab) tab.detach();
+
+    if (firstLabel && firstLabel !== label) {
+      //debug: "activate first";
+      $(tabs.notes).activate(firstLabel);
+    } else if (secondLabel){
+      //debug: "activate second";
+      $(tabs.notes).activate(secondLabel);
+    }
+  }
+
+  function activateTab(filePath) {
+    debug: "DivTabs.activateTab...";
+    //debug: filePath;
+    var label = $(tabs.notes).getLabel(filePath.toString());
+    if (label) {
+      $(tabs.notes).activate(label);
+    }
+  }
+
+  function removeFormatting() {
+    debug: "DivTabs.removeFormatting...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:remove-span:*");
+    }
+  }
+
+  function formatBold() {
+    debug: "DivTabs.formatBold...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-span:b|strong");
+    }
+  }
+
+  function formatEmphasis() {
+    debug: "DivTabs.formatEmphasis...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-span:i|em");
+    }
+  }
+
+  function formatSuperscript() {
+    debug: "DivTabs.formatSuperscript...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-span:sup");
+    }
+  }
+
+  function formatSubscript() {
+    debug: "DivTabs.formatSubscript...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-span:sub");
+    }
+  }
+
+  function formatUnderline() {
+    debug: "DivTabs.formatUnderline...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-span:u");
+    }
+  }
+
+  function formatDeletion() {
+    debug: "DivTabs.formatDeletion...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-span:del|s|strike");
+    }
+  }
+
+  function formatParagraph(index) {
+    debug: "DivTabs.formatParagraph...";
+    //debug: index;
+    var tab = $(tabs.notes).currentTab;
+    var type = "";
+    if (tab) {
+      switch (index) {
+        case 0: // normal
+          type = "p";
+          break;
+        case 1: // compact
+          type = "div";
+          break;
+        case 2: // h1
+          type = "h1";
+          break;
+        case 3: // h2
+          type = "h2";
+          break;
+        case 4: // h3
+          type = "h3";
+          break;
+        case 5: // h4
+          type = "h4";
+          break;
+        case 6: // h5
+          type = "h5";
+          break;
+      }
+    }
+
+    tab.select('htmlarea').execCommand("format:morph-block:" + type);
+  }
+
+  function formatOrderlist() {
+    debug: "DivTabs.formatOrderlist...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-list:ol");
+    }
+  }
+
+  function formatUnorderlist() {
+    debug: "DivTabs.formatUnorderlist...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-list:ul");
+    }
+  }
+
+  function formatChecklist() {
+    debug: "DivTabs.formatChecklist...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-list:dir");
+    }
+  }
+
+  function formatDefinitionlist() {
+    debug: "DivTabs.formatDefinitionlist...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-list:dl");
+    }
+  }
+
+  function formatBlockquote() {
+    debug: "DivTabs.formatBlockquote...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-block:blockquote");
+    }
+  }
+
+  function formatPreformatted() {
+    debug: "DivTabs.formatPreformatted...";
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').execCommand("format:toggle-pre");
+    }
+  }
+
+  function tableHtml(cols, rows, headerCols=0, headerRows=0, autoWidth = true) {
+    if( !rows || !cols )
+       return "";
+    const width = autoWidth ? "" : "width=100%";
+    var table = "<table "+ width +"><tbody>";
+    for( var r in rows ) {
+      table += "<tr>";
+      if( r < headerRows )
+        for( var c in cols )
+          table += "<th></th>";
+      else
+        for( var c in cols )
+          table += c < headerCols ? "<th></th>" : "<td></td>";
+      table += "</tr>\r\n";
+     }
+     table += "</tbody></table>";
+     return table;
+  }
+
+  event exec:insert-table (evt)
+  {
+    const params = evt.data;
+    const rows = params.rows;       assert rows;
+    const columns = params.columns; assert columns;
+    const autoWidth = params.autoWidth || true;
+    const columnHeaders = params.columnHeaders || 0;
+    const rowHeaders = params.rowHeaders || 0;
+
+    //const border = params.border ? "border" : "";
+    var html = tableHtml(columns, rows, columnHeaders, rowHeaders, autoWidth);
+
+    function insertIt(transaction) {
+      // 'this' here is the htmlarea
+      var pos = transaction.removeRange();                    // delete selection if any
+      var container = DOM.blocksContainerOf(pos[0]);          // get container that can hold the <table>
+      pos = transaction.split(pos,container);                 // split the pos until the container
+      var insertedNodes = transaction.insertHtml(pos, html);  // insert the html at pos
+      assert insertedNodes.length && insertedNodes[0].tag == "table";
+      var table = insertedNodes[0];
+      var firstTextPos = table.$(td).firstCaretPos;
+      this.state.focus = true;
+      this.selection.select(firstTextPos);                    // move caret to pos
+      return true;
+    }
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').transact(insertIt,"insert table"); // do the action inside undoable transaction.
+    }
+  }
+
+  function insertTable(rows, cols, autoWidth, rowHeaders, colHeaders) {
+    debug: "DivTabs.insertTable...";
+    debug: rows, cols, autoWidth, rowHeaders, colHeaders;
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      /*NoteView.current.DivTabs.execCommand("insert-table",
+        {
+          rows: R + 1,
+          columns: C + 1,
+          autoWidth: autoWidth,
+          rowHeaders: params.rowHeaders || 0,
+          columnHeaders: params.columnHeaders || 0
+        });*/
+      tab.select('htmlarea').execCommand("insert-table",
+        {rows: rows,
+         columns:cols,
+         autoWidth: autoWidth,
+         rowHeaders: rowHeaders,
+         columnHeaders: colHeaders});
+    }
+  }
+
+  function showSource() {
+    debug: "DivTabs.showSource...";
+    var tab = $(tabs.notes).currentTab
+    var plaintext = tab.select('plaintext');
+    if (!plaintext) {
+      var splitter = new Element("splitter");
+      var plaintext = new Element("plaintext");
+      plaintext.attributes['style'] = "width: 240dip";
+      tab.append(splitter);
+      tab.append(plaintext);
+      tab.select('plaintext').text = tab.select('htmlarea').html;
+    } else {
+      plaintext.detach();
+      tab.update();
+    }
+  }
+
+  // internals
+  function insertImageImpl(imagePath) {
+    var html = String.$(<img src="{imagePath}">);
+
+    function insert(transaction) {
+      // 'this' here is an htmlarea
+      var pos = transaction.removeRange();   // delete selection if any
+      var insertedNodes = transaction.insertHtml(pos, html);     // insert the html at pos
+      assert(insertedNodes && insertedNodes[0].tag == "img");
+      var img = insertedNodes[0];
+      this.selection.select(img.lastCaretPos,img.lastCaretPos);  // set caret after image
+      this.state.focus = true;
+      return true;
+    }
+
+    //$(htmlarea).transact(insert,"insert image"); // do the action inside undoable transaction.
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').transact(insert,"insert image"); // do the action inside undoable transaction.
+    }
+  }
+
+  function loadEmptyTabs() {
+    this.load(this.url("../Note/tabs-empty.htm"));
+  }
+
+  function createTab(fileName, filePath, html, untitled) {
+    var now = new Date();
+    //debug: now.toISOString();
+    // create new label element with an attribute "for"
+    var label = new Element("label");
+
+    label.attributes["for"] = filePath.toString();
+    if (filePath) {
+      label.attributes["filePath"] = filePath.toString();
+    }
+    label.text = untitled ? "untitled" : fileName.toString();
+
+    var span = new Element("span");
+    span.attributes["class"] = "close";
+    label.append(span);
+    //debug: label.toString();
+
+    // append element to the parent
+    $(tabs.notes).select('div.strip').append(label);
+    // example how to append html
+    //$(div.strip).$append(<label for={name}>{fileName}</label>);
+
+    // create new section element with an attribute "name"
+    var section = new Element("frameset");
+    section.attributes['name'] = filePath.toString();
+    section.attributes['cols'] = "*, 240dip";
+    if (html) {
+      section.html = String.$(<htmlarea>{html}</htmlarea>);
+    } else {
+      section.html = String.$(<htmlarea><p></p></htmlarea>);
+    }
+
+    //debug: section.toString();
+    //$(tabs.notes).$append(<section({fileName})></section>); // note that () will add an attribute name={fileName}
+
+    // append section element to the parent
+    $(tabs.notes).append(section);
+
+    // select new added tab
+    $(tabs.notes).activate(label);
+    var tab = $(tabs.notes).currentTab;
+    if (tab) {
+      tab.select('htmlarea').state.focus = true;
+    }
+  }
+}
+
+class CheckListItem : Element {
+
+  event mousedown (evt) {
+    if (evt.isOnIcon) {
+      this.toggle(!this.$is(.checked));
+      this.postEvent("change"); // notify document change
+      return true;
+    }
+  }
+
+  function toggle(onOff) {
+    this.attributes.toggleClass("checked", !this.$is(.checked));
+    this.attributes.removeClass("mixed");
+    this.updateChildrenState(onOff);
+    for(var p = this.parent; p && p !== self; p = p.parent)
+      if(p instanceof CheckListItem) p.checkChildrenState();
+  }
+
+  function checkChildrenState()
+  {
+    var hasChecked = this.$(> dir>li.checked);
+    var hasUnchecked = this.$(> dir>li:not(.checked));
+    if( !hasChecked && !hasUnchecked ) { this.attributes.removeClass("mixed"); }
+    else if( hasChecked && !hasUnchecked ) { this.attributes.toggleClass("checked", true); this.attributes.removeClass("mixed");}
+    else if( !hasChecked && hasUnchecked ) { this.attributes.toggleClass("checked", false); this.attributes.removeClass("mixed");}
+    else { this.attributes.addClass("mixed", false); this.attributes.removeClass("checked"); }
+  }
+
+  function updateChildrenState( onOff ) {
+    for(var child in this.$$(dir > li)) {
+      child.attributes.toggleClass("checked", onOff);
+      child.attributes.removeClass("mixed");
+    }
+  }
+
+}

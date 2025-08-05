@@ -1,0 +1,188 @@
+/*html {
+  background-color:green;
+}*/
+
+div.filebrowser {
+  prototype: FilebrowserView url("../Filebrowser/Filebrowser.tis");
+  border: none;
+  min-width: 1dpi;
+}
+
+div.filebrowser > frameset {
+  //flow: vertical;
+  size: *;
+  border: none;
+}
+
+div.openfiles {
+  flow: vertical;
+  size: *;
+  //@CHECK-SIZE;
+}
+
+div.recentfiles {
+  flow: vertical;
+  size: *;
+  //@CHECK-SIZE;
+}
+
+div.openfolders {
+  flow: vertical;
+  size: *;
+}
+
+div.openfiles > select {
+  size: *;
+  border: none;
+  color: #ccc;
+  background-color: #252526;
+  //@CHECK-SIZE;
+}
+
+div.recentfiles > select {
+  size: *;
+  border: none;
+  color: #ccc;
+  background-color: #252526;
+  //@CHECK-SIZE;
+}
+
+div.openfolders > select {
+  size: *;
+  border: none;
+  color: #ccc;
+  background-color: #252526;
+  //@CHECK-SIZE;
+}
+
+div.filebrowser > frameset > splitter {
+  //background-color: rgba(1, 0, 0, 20%);
+  hit-margin: 2dip;
+  height: 2dip;
+  width: *;
+}
+
+div.filebrowser > frameset > splitter {
+  //background-color: rgba(1, 0, 0, 80%);
+  height: 2dip;
+  width: *;
+}
+
+option:not(:node) {
+  max-width: auto;
+  background: none;
+  margin: 0;
+  padding-left: 6px;
+  //@CHECK-SIZE;
+}
+
+/*div.openfolders > select > option > option {
+  max-width: auto !important;
+  background: none;
+  margin: 0 !important;
+  //padding-left: 6px;
+  //@CHECK-SIZE;
+}*/
+
+div > select > option > caption {
+  width: *;
+  background: none;
+  margin: 0;
+  padding-left: 6px;
+  //@CHECK-SIZE;
+}
+
+div.openfiles > select > option#leaf_files {
+  aspect: FilebrowserView.SetTooltip;
+  //@CHECK-SIZE;
+}
+
+option:not(:node):current
+{
+  background-color: #0e639c;
+}
+
+option:not(:node):current:hover
+{
+  background-color: #0e639c;
+}
+
+option:not(:node):hover
+{
+  background-color: #37373d;
+}
+
+div.recentfiles > select > option#leaf_recent {
+  aspect: FilebrowserView.SetTooltip;
+}
+
+ul.expandable {
+  display: block;
+  font: system;
+  behavior:expandable-list;
+  width:*;
+  height:*;
+  padding: 0px;
+  margin: 0px;
+  //overflow: hidden;
+  //border: 1px solid;
+  //border-color: #BBB #FFF #FFF #BBB;
+}
+
+ul.expandable > li > caption
+{
+  flow: horizontal;
+  font-size: 14dip;
+  font-weight: bold;
+  color: #ddd;
+  margin: 0px;
+  padding-left: 4dip;
+  padding-top: 4dip;
+  padding-bottom: 2dip;
+  height: 20dip;
+  background-color:#383838;
+  //@CHECK-SIZE;
+}
+
+ul.expandable > li > div.details { visibility:collapse; }
+
+ul.expandable > li:expanded { height:100*; transition: height(sine-in-out,400ms); }
+ul.expandable > li:animating > div.details { visibility:visible; overflow:hidden; }
+ul.expandable > li:expanded > div.details { visibility:visible; }
+
+ul.expandable > li > caption > button {
+  display: block;
+  size: 20dip;
+  foreground-position: 50% 50%;
+  foreground-repeat: no-repeat;
+  foreground-size: 50%;
+  color: #ccc;
+  fill: #ccc;
+  stroke: none;
+  padding: 0;
+  margin-left: *;
+  border: none;
+  outline: none;
+  background: none;
+  visibility: hidden;
+  //@CHECK-SIZE;
+}
+
+ul.expandable > li.docfolders > caption:hover > button.refresh
+{
+  cursor: pointer;
+  visibility: visible;
+}
+
+ul.expandable > li.docfolders > caption > button.refresh:active
+{
+  size: 20dip;
+  foreground-size: 20dip 20dip; foreground-image: url(path:M5.56253 2.5158C3.46348 3.45013 2 5.55417 2 8.00002C2 11.3137 4.68629 14 8 14C11.3137 14 14 11.3137 14 8.00002C14 5.32522 12.2497 3.05922 9.83199 2.28485L9.52968 3.23835C11.5429 3.88457 13 5.77213 13 8.00002C13 10.7614 10.7614 13 8 13C5.23858 13 3 10.7614 3 8.00002C3 6.31107 3.83742 4.8177 5.11969 3.91248L5.56253 2.5158Z M5 3H2V2H5.5L6 2.5V6H5V3Z)
+}
+
+ul.expandable > li.docfolders:hover > button.refresh
+{
+  visibility: visible;
+}
+
+ul.expandable > li.docfolders > caption > button.refresh { foreground-size: 16dip 16dip; foreground-image: url(path:M5.56253 2.5158C3.46348 3.45013 2 5.55417 2 8.00002C2 11.3137 4.68629 14 8 14C11.3137 14 14 11.3137 14 8.00002C14 5.32522 12.2497 3.05922 9.83199 2.28485L9.52968 3.23835C11.5429 3.88457 13 5.77213 13 8.00002C13 10.7614 10.7614 13 8 13C5.23858 13 3 10.7614 3 8.00002C3 6.31107 3.83742 4.8177 5.11969 3.91248L5.56253 2.5158Z M5 3H2V2H5.5L6 2.5V6H5V3Z)}

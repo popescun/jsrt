@@ -1,0 +1,250 @@
+include "lightbox-dialog.tis";
+
+class Tabs : Element
+{
+    var tooltipText = "dummy";
+    function attached()
+    {
+      if( ! this.length )
+        return;
+      if( ! this.$(:root>div.strip) )
+        this.init();
+
+      this.state.focusable = true;
+
+      /*var label = this.$(:root>.strip>label[selected],:root>.strip>label:first-child); // initialy selected tab or the first one
+
+      var name = label.attributes["for"];
+
+      // find panel we need to show by default
+      var panel = this.$(:root>[name='{name}'],:root>#{name});
+      assert panel : "Tab panel with the name " + name + " not found";
+
+      if(label)
+        this.post( ::this.activate(label, false) );*/
+    }
+
+    // get/set current tab by name
+    property current(v) {
+      get {
+        var label = this.$(:root>.strip>label:current);
+        return label ? label.attributes["for"] : undefined;
+      }
+      set {
+        var label = this.$(:root>.strip>label[for='{v}']);
+        this.activate(label,false);
+      }
+    }
+
+    property currentTab(v) {
+      get {
+        var name = this.current;
+        //var panel = this.$(:root>[name='{name}'],:root>#{name});
+        var panel = this.$(:root>[name='{name}']);
+        return panel ? panel : undefined;
+      }
+    }
+
+    property currentLabel(v) {
+      get {
+        var label = this.$(:root>div.strip>label:current);
+        return label ? label : undefined;
+      }
+    }
+
+    /*event mouseenter {
+      debug: "mouseenter...";
+    }*/
+
+    event ~click $(div.strip > label > span) (event, element) {
+      //debug: "span.click...";
+
+      var label = element.parent;
+
+      var firstLabel, secondLabel;
+      if (label) {
+        firstLabel = label.parent.first ? label.parent.first : null;
+        secondLabel = firstLabel.next;
+
+        //if(firstLabel) debug: firstLabel.attributes["for"];
+        //if(secondLabel)  debug: secondLabel.attributes["for"];
+      }
+
+      // close tab: either save or destroy
+
+      var forName = label.attributes["for"]; // notice that it contains the file path now!
+      var filePath = label.attributes["filePath"];
+
+      var panel = this.getPanel(forName);
+      if (panel) {
+        var res;
+        // todo: fix light box slow repsons and hangs!!!
+        /*if (view.isUntitled("sciter_note", forName)) {
+          debug: "show close dialog";
+          res = dialog { body:"<label>Save changes to New file before closing?</label>",
+                        caption: "Closing",
+                        buttons:[{caption:"Close without saving", value:"CloseWithout"},
+                        {caption:"Cancel", value:"Cancel"},
+                        {caption:"Save", value:"Save"}] };
+
+        }*/
+
+        if (!view.closeFile("sciter_note", filePath, panel.select('htmlarea').html, res)) {
+          return true;
+        }
+
+        label.detach(); // tab label
+        panel.detach(); // tab section
+      }
+
+      if (firstLabel && firstLabel !== label) {
+        //debug: "activate first";
+        this.activate(firstLabel);
+      } else if (secondLabel){
+        //debug: "activate second";
+        this.activate(secondLabel);
+      }
+
+      return true;
+    }
+
+    event click $(div.strip > label) (event, element) {
+      //debug: "label.click...";
+
+      var label = element;
+      //debug: label.attributes["for"];
+      if(label && label.parent === this.$(:root>div.strip)) {
+        this.activate(label);
+      }
+      return true;
+    }
+
+    function onFocus(event) {
+      switch( event.type )
+      {
+        case Event.GOT_FOCUS: /*stdout.println("focus");*/ break;
+      }
+    } // it is here to indicate that it needs focus.
+
+    /*event click $(div#strip) (evt, element) {
+      debug: "label.click...";
+    }*/
+
+    function onKey(event)
+    {
+      if(event.type != Event.KEY_DOWN)
+        return false; // we are handling only KEY_DOWN here
+
+      if(!this.state.focus)
+        return false;
+
+      var currentLabel = this.$(:root>div.strip>label:current);
+
+      switch( event.keyCode )
+      {
+        case Event.VK_TAB:
+          if( event.ctrlKey )
+            return this.activate( event.shiftKey? currentLabel.prior : currentLabel.next );
+          break;
+        case Event.VK_LEFT: return this.activate( currentLabel.prior );
+        case Event.VK_RIGHT: return this.activate( currentLabel.next );
+        case Event.VK_HOME: return this.activate( currentLabel.parent.first );
+        case Event.VK_END: return this.activate( currentLabel.parent.last );
+      }
+      return false;
+    }
+
+    function getPanel(forName)
+    {
+      // find panel
+      var name = forName.toString();
+      //var panel = this.$(:root>[name='{name}'],:root>#{name});
+      var panel = this.$(:root>[name='{name}']);
+
+      return panel;
+    }
+
+    function getLabel(filePath)
+    {
+      // find label
+      //debug: filePath.toString();
+      var strip = this.$(:root>div.strip);
+      var label = strip.$([filePath='{filePath.toString()}']);
+      //debug: label.attributes["for"];
+      //debug: label.attributes["filePath"];
+      return label;
+    }
+
+    function panelExist(forName)
+    {
+      // find panel
+      var name = forName.toString();
+      //var panel = this.$(:root>[name='{name}'],:root>#{name});
+      var panel = this.$(:root>[name='{name}']);
+
+      return panel ? true : false;
+    }
+
+    // a.k.a. select tab, label here is a <label> inside <div.strip>
+    function activate( label, notify = true )
+    {
+      if( !label )
+        return false;
+      if(label.state.current)
+        // already selected, nothing to do...
+        return true; // but we've handled it.
+
+      label.on("mouseenter", function() {
+        //debug: "label mouseenter...";
+        tooltipText = label.attributes["filePath"];
+      });
+
+      var strip = this.$(:root>div.strip);
+
+      //find currently selected element (tab and panel) and remove "selected" from them
+      var currentPanel = this.$(:root>[name]:expanded,:root>[id]:expanded);
+      var currentLabel = strip.$(label:current);
+
+      // find new tab and panel
+      var name = label.attributes["for"];
+      var filePath = label.attributes["filePath"];
+      //var panel = this.$(:root>[name='{name}'],:root>#{name});
+      var panel = this.$(:root>[name='{name}']);
+
+      assert panel : "panel " + name + " not found";
+
+      DivTabs.updateActiveDocument(name, filePath);
+
+      if( currentPanel ) {
+        currentPanel.state.collapsed = true; // set collapsed in case of someone use it for styling
+        currentPanel.postEvent("collapsed");
+      }
+      if( currentLabel )
+        currentLabel.state.current = false;
+
+      panel.sendEvent("expanded");
+      strip.state.current = true;
+      panel.state.expanded = true; // expand it
+      label.state.current = true;
+
+      if(notify)
+        this.postEvent("statechange");
+
+      return true;
+    }
+
+    function SetTooltip() {
+      debug: "SetTooltip";
+      var tooltip = $(popup#dyn-tooltip); // element will be shown as tooltip
+      var format = tooltip.attributes["format"]; // message format
+      var counter = 0;
+
+      function provideTip(evt) {
+        tooltip.text = tooltipText;
+        evt.source = tooltip;
+        return true;
+      }
+
+      this.subscribe(provideTip, Event.BEHAVIOR_EVENT,  Event.REQUEST_TOOLTIP);
+    }
+}

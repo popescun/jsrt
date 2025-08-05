@@ -1,0 +1,19 @@
+namespace Application {
+  var appContainer;
+  function this(container) {
+    appContainer = container;
+    debug: "Application constructor...";
+
+    //var scriptDir = view.getDirName("sciter");
+    //debug: scriptDir;
+    //debug: self.url("../MainScreen/MainScreen.htm");
+    appContainer.load("scriptDir" + "/../../MainScreen/MainScreen.htm");
+    // using self.url
+    //appContainer.load(self.url("../MainScreen/MainScreen.htm"));
+  }
+
+  function openScreen(htmPath) {
+    var scriptDir = view.getDirName("sciter");
+    self#screens.load("scriptDir" + "/../../" + htmPath);
+  }
+}

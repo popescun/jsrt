@@ -1,0 +1,47 @@
+<html>
+  <head>
+
+    <title>Application</title>
+
+    <style>
+      html
+      {
+        background:green;
+        vertical-align:middle;
+        text-align:center;
+      }
+
+      body
+      {
+        margin: 0 0 0 0;
+        background:blue;
+      }
+
+      frame#screens
+      {
+        background-color: yellow;
+        /*font-size:5vw;*/
+        vertical-align:middle;
+        text-align:center;
+      }
+    </style>
+
+    <script type="text/tiscript">
+      include "App.tis";
+      Application(self#screens);
+
+      function self.ready()
+      {
+        $(title).text = "Test";
+      }
+    </script>
+
+  </head>
+
+  <body>
+    <frame #screens>
+      Add screen content here
+    </frame>
+  </body>
+
+</html>

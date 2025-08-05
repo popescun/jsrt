@@ -1,0 +1,318 @@
+
+tabs
+{
+  font: system;
+  prototype: Tabs url(../Note/Tabs.tis);
+  size:*;
+  //overflow:hidden;
+  display:block;
+  flow: vertical;
+  background: #252526;
+}
+
+tabs > div.strip /* the tab strip */
+{
+  flow: horizontal;
+  //margin-bottom:-1px;
+  //padding: 2px 2px 0 2px;
+  overflow-x: auto;
+  horizontal-scrollbar: my-h-scrollbar;
+}
+
+tabs > div.strip > label /* all tab labels, passive by default */
+{
+  cursor: pointer;
+  behavior: clickable;
+  flow: horizontal;
+  display:block;
+  padding: 6px 8px;
+  height:*;
+  max-width: auto; /* not wider than max-intrinsic  */
+  //min-width: 80px;
+  aspect: Tabs.SetTooltip;
+  //width: max-content;
+}
+
+tabs > div.strip > label:hover /* passive tab */
+{
+  color: highlight;
+}
+
+tabs > div.strip > label:hover span.close
+{
+  foreground-image: url(path:M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z);
+}
+
+tabs > div.strip > label:current /*active tab*/
+{
+  //margin:-2px -2px -1px -2px;
+  //padding: 4px 10px 5px 10px;
+  //position: relative;
+}
+
+tabs:tab-focus > div.strip > label:current  {
+  //outline: 1px dotted -4px;
+}
+
+tabs > div.strip > label:current > span.close
+{
+  foreground-image: url(path:M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z);
+}
+
+/* outline active tab content if we've gotten focus by tab*/
+tabs:tab-focus > div.strip > label:current > *
+{
+  //outline: 1px dotted #fff;
+}
+
+tabs > div.strip > label > span.close {
+  behavior: clickable;
+  cursor: pointer;
+  margin-left: 8px;
+  //foreground-image: url(path:M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z);
+  display:block;
+  size: 16dip;
+  foreground-position: 50% 50%;
+  foreground-repeat: no-repeat;
+  foreground-size: 50%;
+  //color: #666;
+  fill: #bbb;
+  stroke: none;
+  border: none;
+  background: none;
+}
+
+tabs > div.strip > label > span.close:hover
+{
+  //background: #bbb;
+}
+
+/* tab containers, MUST have 'name' attribute defined */
+tabs > [name]
+{
+  display:none;
+}
+
+tabs > [name]:expanded
+{
+  //padding:4px;
+  display:block;
+  height:*;
+}
+
+tabs > frameset
+{
+  flow: horizontal;
+}
+
+tabs > frameset[cols]
+{
+  //visibility: hidden;
+}
+
+
+tabs > frameset > htmlarea
+{
+  font: system;
+  font-size: 15dip;
+  size: *;
+  border: none;
+  padding: 12px;
+  background: #1e1e1e;
+  color: #ddd;
+  //@CHECK-SIZE;
+}
+
+tabs > frameset > splitter
+{
+  //visibility: hidden;
+  background: #1e1e1e;
+  hit-margin: 2dip;
+  width: 0dip;
+  height: *;
+}
+
+tabs > frameset > plaintext
+{
+  border: none;
+  background: #2e2e2e;
+  width: 0;
+  //@CHECK-SIZE;
+}
+
+tabs > frameset > plaintext > text
+{
+  margin-left: 40dip;
+  border: none;
+  color: #ddd;
+  background: #2e2e2e;
+  //@CHECK-SIZE;
+}
+
+@media uses-platform-themes {
+  /* Windows uxthemes dll available */
+  tabs > div.strip > label /* all tab labels, passive by default */
+  {
+    //background-image:url(theme:tab-item-normal);
+    background-repeat:stretch;
+  }
+  tabs > div.strip > label:hover /* passive tab */
+  {
+    background-image:url(theme:tab-item-hover);
+    color: highlight;
+  }
+  tabs > div.strip > label:current /*active tab*/
+  {
+    background-image:url(theme:tab-item-selected);
+  }
+  tabs > div.strip > label:current:hover /*active tab*/
+  {
+    background-image:url(theme:tab-item-selected);
+  }
+
+  tabs > div.strip > label:current:first-child,
+  tabs > div.strip > label:current:hover:first-child
+  {
+    background-image:url(theme:tab-item-leftmost-selected);
+  }
+
+  tabs > [name]:expanded
+  {
+    background-image:url(theme:tab-panel);
+    background-repeat:stretch;
+  }
+
+}
+
+@media !uses-platform-themes {
+
+  tabs > div.strip > label /* all tab labels, passive by default */
+  {
+    background: #f0f0f0;
+    color: #000;
+    //border:1dip solid #2cd6d9;
+    //border-radius: 4dip 4dip 0 0;
+    border-bottom: none;
+    //margin-left:-1px;
+    //@CHECK-SIZE;
+    color: #ccc;
+    background: #2d2d2d;
+  }
+
+  tabs > div.strip > label:hover /* passive tab */
+  {
+    background: @THREEDHOVER;
+    color: @HIGHLIGHT;
+  }
+
+  tabs > div.strip > label:current /*active tab*/
+  {
+    background: #fff;
+    //margin:-2px -2px 0px -2px;
+    color: #fff;
+    background: #1e1e1e;
+    //@CHECK-SIZE;
+  }
+
+  tabs > [name]:expanded
+  {
+    //background-image:url(theme:tab-panel);
+    //background-repeat:stretch;
+    background: #fff;
+    //border:1dip solid #2cd6d9;
+  }
+
+}
+
+blockquote {border-left:0.2em solid #777;margin-left:1em;padding-left:0.8em;}
+pre{padding:4px;border:1px solid #777;background: #555;max-width:100%;overflow-x:auto;}
+
+dir {
+  padding-left:0;
+  padding-right:0;
+}
+
+dir > li {
+  prototype: CheckListItem url(../Note/NoteView.tis);
+  display:block;
+  foreground-image: url(path:M1312 256h-832q-66 0-113 47t-47 113v832q0 66 47 113t113 47h832q66 0 113-47t47-113v-832q0-66-47-113t-113-47zm288 160v832q0 119-84.5 203.5t-203.5 84.5h-832q-119 0-203.5-84.5t-84.5-203.5v-832q0-119 84.5-203.5t203.5-84.5h832q119 0 203.5 84.5t84.5 203.5z);
+  foreground-size: 1em 1em;
+  foreground-repeat:no-repeat;
+  foreground-position:0 0;
+  foreground-image-cursor: pointer;
+  padding-left:1.4em;
+  margin: 1em 0;
+  fill: #ddd;
+}
+
+dir > li.checked {
+  foreground-image: url(path:M1472 930v318q0 119-84.5 203.5t-203.5 84.5h-832q-119 0-203.5-84.5t-84.5-203.5v-832q0-119 84.5-203.5t203.5-84.5h832q63 0 117 25 15 7 18 23 3 17-9 29l-49 49q-10 10-23 10-3 0-9-2-23-6-45-6h-832q-66 0-113 47t-47 113v832q0 66 47 113t113 47h832q66 0 113-47t47-113v-254q0-13 9-22l64-64q10-10 23-10 6 0 12 3 20 8 20 29zm231-489l-814 814q-24 24-57 24t-57-24l-430-430q-24-24-24-57t24-57l110-110q24-24 57-24t57 24l263 263 647-647q24-24 57-24t57 24l110 110q24 24 24 57t-24 57z);
+  foreground-size: 1.2em 1em;
+}
+
+dir > li.mixed {
+  foreground-image: url(path:M1664 416v960q0 119-84.5 203.5t-203.5 84.5h-960q-119 0-203.5-84.5t-84.5-203.5v-960q0-119 84.5-203.5t203.5-84.5h960q119 0 203.5 84.5t84.5 203.5z);
+  fill: #aaa;
+}
+
+
+/* style block defining horizontal scrollbar */
+@set my-h-scrollbar
+{
+  .prev
+  {
+    //border:1dip solid #AAA;
+    //foreground-image:url( images/sb-h-scroll-prev.png );
+    foreground-position:50% 50%;
+    foreground-repeat:no-repeat;
+    width: 15dip;
+  }
+  .next
+  {
+    //border:1dip solid #AAA;
+    //foreground-image:url( images/sb-h-scroll-next.png );
+    foreground-position:50% 50%;
+    foreground-repeat:no-repeat;
+    width: 15dip;
+  }
+  .next-page,
+  .prev-page, .base
+  {
+    //background-image:url( images/sb-scroll-back.png );
+    background-position:5dip 5dip 5dip 5dip; /*left top right bottom offsets*/
+    background-repeat:expand;
+  }
+
+  .slider
+  {
+    //border:1dip solid #AAA;
+    //foreground-image:url( images/sb-scroll-slider.png );
+    foreground-position:50% 50%;
+    foreground-repeat:no-repeat;
+  }
+
+  .next:disabled, .slider:disabled,
+  .prev:disabled
+  {
+    foreground-image:none;
+    border:none;
+    foreground-image:none;
+    width:0;
+  }
+
+  .base:disabled
+  {
+    //background-image:url( images/sb-scroll-base.png );
+    background-repeat:repeat;
+    background-position:0 0 0 0;
+  }
+
+  .next:hover,   .slider:hover,
+  .prev:hover     { background-color: #555; }
+
+  .next:active,  .slider:active,
+  .prev:active    { background-color: #555; }
+
+  .base { height: 4dip; } /* explicit declaration of its height */
+
+}

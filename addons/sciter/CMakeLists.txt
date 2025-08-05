@@ -1,0 +1,56 @@
+project(sciter)
+
+cmake_minimum_required(VERSION 3.5)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(JSRT_DIR ${CMAKE_HOME_DIRECTORY}/../../)
+
+set(USE_V8 "TRUE" CACHE BOOL "Option to build using direct v8 libs")
+#message(FATAL_ERROR "USE_V8=${USE_V8}")
+
+string(TOLOWER ${CMAKE_BUILD_TYPE} lower_build_type)
+
+if (${USE_V8}) # build using direct v8 libraries
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  #set(CMAKE_CXX_FLAGS "-std=gnu++14 -fPIC -Wno-narrowing -fno-rtti -fvisibility-inlines-hidden")
+  set(CMAKE_CXX_FLAGS "-fPIC -fno-rtti -std=gnu++1y")
+  set(CMAKE_EXE_LINKER_FLAGS "-pie -Wl,--fatal-warnings -fPIC -Wl,-z,noexecstack -Wl,-z,now -Wl,-z,relro -Wl,-z,defs -Wl,--as-needed -fuse-ld=gold -B${JSRT_DIR}/deps/v8/third_party/binutils/Linux_x64/Release/bin -Wl,--threads -Wl,--thread-count=4 -Wl,--icf=all -m64 -rdynamic -Wl,-rpath-link=. -Wl,--disable-new-dtags -Wl,-O2 -Wl,--gc-sections")
+  add_definitions(-DWITH_V8)
+elseif (${ARCH} STREQUAL "ARM64") # android
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  #rpath points to <internal storage>/Android/data
+  #-Wl,-rpath,/data/user/0/com.termux/files/usr/lib
+  set(CMAKE_CXX_FLAGS "-fPIC -fno-rtti -std=gnu++1y")
+  set(CMAKE_SHARED_LINKER_FLAGS -Wl,-rpath,/data/data/com.example.sciter_jsrt_android)
+elseif (${ARCH} STREQUAL "ARM") # build using node libraries for arm
+  #set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_FLAGS "-fPIC -fno-rtti -std=gnu++1y")
+  set(CMAKE_EXE_LINKER_FLAGS "\
+  -pthread \
+  -rdynamic \
+  -Wl,--whole-archive,${CMAKE_HOME_DIRECTORY}/deps/node/out/${CMAKE_BUILD_TYPE}/obj.target/libnode.a \
+  -Wl,--no-whole-archive \
+  -Wl,--whole-archive,${CMAKE_HOME_DIRECTORY}/deps/node/out/${CMAKE_BUILD_TYPE}/obj.target/deps/zlib/libzlib.a \
+  -Wl,--no-whole-archive \
+  -Wl,--whole-archive,${CMAKE_HOME_DIRECTORY}/deps/node/out/${CMAKE_BUILD_TYPE}/obj.target/deps/uv/libuv.a \
+  -Wl,--no-whole-archive \
+  -Wl,-z,noexecstack \
+  -Wl,--whole-archive ${CMAKE_HOME_DIRECTORY}/deps/node/out/${CMAKE_BUILD_TYPE}/obj.target/deps/v8/gypfiles/libv8_base.a \
+  -Wl,--no-whole-archive \
+  -Wl,-z,relro \
+  -Wl,-z,now \
+  -Wl,--whole-archive,${CMAKE_HOME_DIRECTORY}/deps/node/out/${CMAKE_BUILD_TYPE}/obj.target/deps/openssl/libopenssl.a \
+  -Wl,--no-whole-archive \
+  -pthread")
+endif()
+
+if (${ARCH} STREQUAL "ARM64")
+  add_subdirectory(sciter_android)
+else()
+  add_subdirectory(sciter_gtk)
+  add_subdirectory(sciter_glfw)
+endif()
+

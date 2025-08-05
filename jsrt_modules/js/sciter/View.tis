@@ -1,0 +1,67 @@
+namespace View {
+  function this() {
+    debug: "View constructor...";
+
+    self.closing = function(reason) {
+      view.closing("sciter_main", reason);
+    };
+  }
+
+  function root() {
+    return view.root.html;
+  }
+
+  function selectFile(mode, filter, extension) {
+    debug: "View.selectFile...";
+    debug: mode, filter, extension;
+    if (view) {
+      return view.selectFile(mode, filter.toString(), extension.toString());
+    }
+    else {
+      debug: "view is null";
+      return null;
+    }
+  }
+
+  function selectFolder() {
+    debug: "View.selectFolder...";
+    if (view) {
+      return view.selectFolder();
+    }
+    else {
+      debug: "view is null";
+      return null;
+    }
+  }
+
+  function msgbox(type, text, title, buttons) {
+    debug: "View.msgbox...";
+    if (view) {
+      return view.msgbox(type, text.toString(), title.toString(), buttons);
+    }
+    else {
+      debug: "view is null";
+      return null;
+    }
+  }
+
+  function window(params) {
+    debug: "View.window...";
+    debug: params;
+    if (view) {
+      return view.window({
+        type: params.type,
+        url: params.url.toString(),
+        state: params.state,
+        width: params.width,
+        height: params.height,
+        client: params.client,
+        alignment: params.allignment
+      });
+    }
+    else {
+      debug: "view is null";
+      return null;
+    }
+  }
+}

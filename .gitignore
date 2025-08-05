@@ -1,0 +1,8 @@
+build/output
+node_modules
+.vscode
+projects/Noot/Store/res/untitled/
+deps
+addons/dear_imgui/build
+addons/dear_imgui/lib
+addons/sciter/build

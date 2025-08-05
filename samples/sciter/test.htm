@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <title>Test</title>
+        <style>
+
+          band {
+            style-set: band-set;
+          }
+
+          @set band-set {
+            :root { display:block; flow:horizontal; background:#ddd; padding:4dip; }
+            button { display:block; style-set: "std-toolbar-button"; size:2em;}
+            button[type="menu"] { display:block; style-set: "std-toolbar-button-menu"; }
+          }
+
+          htmlarea {
+            display: block;
+            size: *;
+            padding: 10px;
+          }
+
+        </style>
+        <script type="text/tiscript">
+          event click $(#button1) {
+            debug: "click";
+            view.msgbox(#question, "Hello Nick!");
+            debug: "after msgbox";
+          }
+        </script>
+    </head>
+    <body>
+
+<band>
+  <button #button1>1</button>
+  <button #button2>2</button>
+  <button|menu>
+    <menu.popup>
+      <li>First</li>
+      <li>Second</li>
+    </menu>
+  </button>
+</band>
+<htmlarea>
+  <ul>
+    <li>dasdas</li>
+    <li>dasdas</li>
+  </ul>
+
+</htmlarea>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+namespace FirstPresenter {
+
+  function this(container) {
+
+    debug: "FirstPresenter constructor...";
+
+    /*container << event click $("button#firstScreen") {
+      //debug: "on button#firstScreen";
+      view.dispatchEvent("sciter", {from: "MAIN_SCREEN", to: "FIRST_SCREEN"});
+    }*/
+
+    // this works
+    container.on("click", "button#mainScreen", function() {
+      //debug: "on button#mainScreen";
+      view.dispatchEvent("sciter", {from: "FIRST_SCREEN", to: "MAIN_SCREEN"});
+    })
+
+  }
+}

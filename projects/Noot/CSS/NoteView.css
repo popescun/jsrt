@@ -1,0 +1,38 @@
+@import url(Tabs.css);
+@import url(lightbox-dialog.css);
+
+div.note {
+  prototype: NoteView url("../Note/NoteView.tis");
+  /*overflow: hidden;*/
+}
+
+div.note > frameset {
+  size: *;
+}
+
+div.note > frameset > div.tabs {
+  prototype: DivTabs url(../Note/NoteView.tis);
+  size: *;
+  background: #222;
+  border: none;
+  /*padding: 8px;*/
+}
+
+table
+{
+  border-collapse:collapse;
+}
+
+table td
+{
+  border:1dip solid #ddd;
+  padding:4dip 8dip;
+}
+
+table th {
+  //font-weight:normal;
+  color:#444;
+  border:1dip solid #ddd;
+  padding:4dip 8dip;
+  background:#eee;
+}

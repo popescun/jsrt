@@ -1,0 +1,119 @@
+var tooltipText = "dummy";
+class FilebrowserView : Element {
+
+  var prevLeaf = null;
+
+  function attached() {
+    debug: "FilebrowserView.attached...";
+    this.load(this.url("../Filebrowser/FilebrowserView.htm"));
+
+    $(li.openfiles).state.expanded = true;
+  }
+
+  // UI updaters (invoked by presenter)
+  function updateOpenFiles(html) {
+    debug: "FilebrowserView.updateOpenFiles...";
+    //debug: html;
+    //debug: $(div.filebrowser#openfiles).html;
+    $(div.openfiles).html = html.toString();
+
+    //$(div.openfiles > select > option).state.expanded = true;
+  }
+
+  function updateRecentFiles(html) {
+    debug: "FilebrowserView.updateRecentFiles...";
+    //debug: html;
+    $(div.recentfiles).html = html.toString();
+  }
+
+  function updateOpenFolders(html) {
+    debug: "FilebrowserView.updateOpenFolders...";
+    //debug: html;
+    //debug: $(div.filebrowser#openfiles).html;
+    $(div.openfolders).html = html.toString();
+  }
+
+  /*function onMouse(event) {
+    if(event.type == Event.MOUSE_ENTER ) {
+      debug: "FilebrowserView.onMouse";
+    }
+  }*/
+
+  /*event click $(option:node) (evt,option) {
+    debug: "tree node selection";
+    debug: event.target;
+  }*/
+
+  event click $(option#leaf_files) (evt, option) {
+    debug: "FilebrowserView.click.option.leaf_files...";
+    //debug: evt.target.$p(option).attributes["filePath"];
+    view.tree_click("sciter_filebrowser", evt.target.$p(option#leaf_files).attributes["filePath"]);
+  }
+
+  function onMouse(event) {
+      if ((event.target.id == "leaf_folders" || event.target.id == "leaf_recent") &&
+          event.type == (Event.MOUSE_DCLICK | Event.SINKING)) {
+        debug: "double click", event.target.id, event.target.attributes["filePath"];
+        view.leaf_folders_dblclick("sciter_filebrowser", event.target.attributes["filePath"]);
+      }
+  }
+
+  // this does not work, using onMouse for now
+  /*event dblclick $(option#leaf_folders) () {
+    debug: "FilebrowserView.dblclick.option.leaf_folders...";
+  }*/
+
+  event mousemove $(option#leaf_files) (evt, option){
+    //debug: "mousemove...", evt.target.text;
+    if (evt.target == prevLeaf) {
+      return;
+    }
+    tooltipText = evt.target.attributes["filePath"];;
+    prevLeaf = evt.target;
+  }
+
+  event mousemove $(option#leaf_recent) (evt, option){
+    //debug: "mousemove...", evt.target.text;
+    if (evt.target == prevLeaf) {
+      return;
+    }
+    tooltipText = evt.target.attributes["filePath"];;
+    prevLeaf = evt.target;
+  }
+
+  function selectOpenFile(filePath) {
+    debug: "FilebrowserView.selectOpenFile...";
+    //debug: filePath;
+    // first unset the current leaf
+    var currentLeaf = $(div.openfiles).$(option:current);
+    if (currentLeaf) {
+      debug: currentLeaf.html;
+      currentLeaf.state.current = false;
+    }
+    // set the selected leaf as current
+    var leaf = $(div.openfiles).$([filePath='{filePath.toString()}']);
+    if (leaf) {
+      debug: leaf.html;
+      leaf.state.current = true;
+    }
+  }
+
+  function SetTooltip() {
+    var tooltip = $(popup#dyn-tooltip); // element will be shown as tooltip
+    var format = tooltip.attributes["format"]; // message format
+    var counter = 0;
+
+    function provideTip(evt) {
+      tooltip.text = tooltipText;
+      evt.source = tooltip;
+      return true;
+    }
+
+    this.subscribe(provideTip, Event.BEHAVIOR_EVENT,  Event.REQUEST_TOOLTIP);
+  }
+
+  event click $(button.refresh) {
+    debug: "FilebrowserView.button.refresh.click...";
+    view.button_refresh_click("sciter_filebrowser");
+  }
+}

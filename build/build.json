@@ -1,0 +1,46 @@
+{
+	"description": "java script runtime",
+	"license": "proprietary",
+	"authors": [
+		"N. Popescu"
+	],
+	"copyright": "Copyright © 2018, N. Popescu",
+	"name": "jsrt",
+	"targetType": "executable",
+	"configuration": "linux_x86_64",
+	"dependencies": {
+		"untangled": {"path":"deps/untangled", "url":"https://NPopescu@bitbucket.org/NPopescu/untangle.git"},
+		"depot_tools": {"path":"deps/depot_tools", "url":"https://chromium.googlesource.com/chromium/tools/depot_tools.git"},
+		"v8": {"enabled": false, "path":"deps/v8", "url":"https://github.com/v8/v8.git", "tag": "7.1.302.4"},
+		"node": {"enabled": true,"path":"deps/node", "url":"https://github.com/nodejs/node.git", "tag": "v13.0.0"},
+		"node-addon-api": {"enabled": true,"path":"deps/node-addon-api", "url":"https://github.com/nodejs/node-addon-api.git", "tag": "3.0.0"},
+		"dear_imgui": {"path":"deps/dear_imgui", "url":"https://github.com/ocornut/imgui.git"},
+		"sciter": {"path":"deps/sciter", "url":"https://github.com/c-smile/sciter-sdk.git"}
+	},
+	"configurations": [
+		{
+			"name": "windows_x86_64",
+			"architecture": "x86_64",
+			"rootBuildDirectory":"build/output/cmake",
+			"copyFiles": ["lib/windows_x86_64/*"]
+		},
+		{
+			"name": "linux_x86_64",
+			"architecture": "x86_64",
+			"rootBuildDirectory":"build/output/cmake",
+			"copyFiles": ["lib/linux_x86_64/*"]
+		},
+		{
+			"name": "linux_raspberrypi",
+			"architecture": "arm",
+			"rootBuildDirectory":"build",
+			"copyFiles": ["lib/linux_raspberrypi/*"]
+		},
+		{
+			"name": "android_arm64",
+			"architecture": "arm64",
+			"rootBuildDirectory":"output/cmake",
+			"copyFiles": ["lib/android/*"]
+		}
+	]
+}
