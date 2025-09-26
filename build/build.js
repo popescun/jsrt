@@ -86,7 +86,7 @@ if (ARGUMENTS.HELP[1]) {
     // console.log(ARGUMENTS[idx])
     if(ARGUMENTS[idx].constructor == Object) {
       keys = Object.keys(ARGUMENTS[idx])
-      console.log('  ' + keys[0] + "," + keys[1] + ' - ' + ARGUMENTS[idx]['DESCRIPTION'] + '\n')
+      console.log('  ' + keys[0] + "|" + keys[1] + ' - ' + ARGUMENTS[idx]['DESCRIPTION'] + '\n')
     }
     if(ARGUMENTS[idx] instanceof Array) {
       // console.log('Array found');
