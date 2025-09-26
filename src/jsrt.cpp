@@ -12,9 +12,8 @@ int main(int argc, char* argv[])
 #ifdef WITH_V8
   jsrt::Application::run(argc, argv);
 #else
-  jsrt::Application::embeddednode().Start(argc, argv);
+  return jsrt::Application::embeddednode().Start(argc, argv);
 #endif
-  return 0;
 }
 
 #ifdef __ANDROID__

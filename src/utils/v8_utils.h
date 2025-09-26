@@ -3,12 +3,12 @@
 #include <include/libplatform/libplatform.h>
 #include <include/v8.h>
 
-#include <iostream>
-
-using namespace v8;
+#include <fstream>
 
 namespace v8_utils
 {
+
+using namespace v8;
 
 inline std::unique_ptr<v8::Platform> Init()
 {
@@ -51,7 +51,7 @@ void BindJsToCppAccessors(Isolate* isolate,
                           GetterT getter,
                           SetterT setter)
 {
-  obj->SetAccessor(String::NewFromUtf8(isolate, JsVariable.c_str()), getter, setter);
+  obj->SetAccessorProperty(String::NewFromUtf8(isolate, JsVariable.c_str()), getter, setter);
 }
 
 // binders for Object
@@ -62,7 +62,7 @@ void BindJsToCppFunction(const Handle<Object>& obj,
 {
   auto isol = obj->GetIsolate();
   auto curCtx = isol->GetCurrentContext();
-  obj->Set(curCtx, String::NewFromUtf8(isol, function.c_str()).ToLocalChecked(), Function::New(curCtx, callback).ToLocalChecked());
+  (void)obj->Set(curCtx, String::NewFromUtf8(isol, function.c_str()).ToLocalChecked(), Function::New(curCtx, callback).ToLocalChecked());
 }
 
 template<typename GetterT, typename SetterT>
@@ -73,7 +73,7 @@ void BindJsToCppAccessors(const Handle<Object>& obj,
 {
   auto isol = obj->GetIsolate();
   auto curCtx = isol->GetCurrentContext();
-  obj->SetAccessor(curCtx, Local<Name>(String::NewFromUtf8(isol, JsVariable.c_str()).ToLocalChecked()), getter, setter);
+  obj->SetAccessorProperty(curCtx, Local<Name>(String::NewFromUtf8(isol, JsVariable.c_str()).ToLocalChecked()), getter, setter);
 }
 
 inline std::string LoadJSFile(std::string path)

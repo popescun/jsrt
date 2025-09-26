@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 4.0.2)
 
 project(jsrt)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (${ARCH} STREQUAL "ARM64") # android
@@ -19,6 +19,10 @@ if (${USE_V8}) # build using direct v8 libraries
   set(CMAKE_CXX_FLAGS "-std=gnu++14 -fPIC -Wno-narrowing -fno-rtti -fvisibility-inlines-hidden")
   set(CMAKE_EXE_LINKER_FLAGS "-pie -Wl,--fatal-warnings -fPIC -Wl,-z,noexecstack -Wl,-z,now -Wl,-z,relro -Wl,-z,defs -Wl,--as-needed -fuse-ld=gold -B${CMAKE_HOME_DIRECTORY}/deps/v8/third_party/binutils/Linux_x64/Release/bin -Wl,--threads -Wl,--thread-count=4 -Wl,--icf=all -m64 -rdynamic -Wl,-rpath-link=. -Wl,--disable-new-dtags -Wl,-O2 -Wl,--gc-sections")
   add_definitions(-DWITH_V8)
+elseif (${ARCH} STREQUAL "MACOS_ARM64")
+  message(STATUS "MACOS_ARM64 architecture...")  
+  # message(FATAL_ERROR "ERROR...")  
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 elseif (${ARCH} STREQUAL "X86_64") # build using node libraries for x86_64
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 elseif (${ARCH} STREQUAL "ARM64") # android
@@ -68,6 +72,20 @@ if (${USE_V8}) # build using direct v8 libraries
   deps/v8/include
   ${CMAKE_HOME_DIRECTORY}/../v8/utils
   deps/untangled)
+elseif (${ARCH} STREQUAL "MACOS_ARM64")  
+  include_directories(${CMAKE_HOME_DIRECTORY}
+  ${CMAKE_HOME_DIRECTORY}/src
+  ${CMAKE_HOME_DIRECTORY}/deps
+  ${CMAKE_HOME_DIRECTORY}/deps/node/src
+  ${CMAKE_HOME_DIRECTORY}/deps/node/deps/v8
+  ${CMAKE_HOME_DIRECTORY}/deps/node/deps/v8/include
+  ${CMAKE_HOME_DIRECTORY}/deps/node/deps/uv/include
+  ${CMAKE_HOME_DIRECTORY}/deps/node/deps/googletest/include
+  ${CMAKE_HOME_DIRECTORY}/deps/node-addon-api
+  ${CMAKE_HOME_DIRECTORY}/src/utils
+  ${CMAKE_HOME_DIRECTORY}/deps/actuator
+  ${CMAKE_HOME_DIRECTORY}/deps/dear_imgui
+  ${CMAKE_HOME_DIRECTORY}/deps/dear_imgui/examples)
 elseif (${ARCH} STREQUAL "X86_64") # build using node libraries
   include_directories(${CMAKE_HOME_DIRECTORY}
   ${CMAKE_HOME_DIRECTORY}/src
@@ -114,8 +132,8 @@ endif()
 if (NOT ${USE_V8})
   add_definitions(-DNODE_WANT_INTERNALS=1)
   set(SOURCE_FILES ${SOURCE_FILES}
-    src/node/embeddednode.cpp
-    src/node/uv_worker_thread.cpp)
+    src/node/embeddednode.cpp)
+    # src/node/uv_worker_thread.cpp)
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/build/output/bin/${CONFIG}/${CMAKE_BUILD_TYPE})
@@ -131,6 +149,10 @@ if (${USE_V8}) # build using direct v8 libraries
   ${CMAKE_HOME_DIRECTORY}/deps/v8/out.gn/x64.${lower_build_type}/obj/libv8_libplatform.a
   ${CMAKE_HOME_DIRECTORY}/deps/v8/out.gn/x64.${lower_build_type}/obj/libv8_monolith.a
   -latomic -ldl -lpthread -lrt -lm)
+elseif (${ARCH} STREQUAL "MACOS_ARM64")
+  message(STATUS "MACOS_ARM64 architecture...")  
+  target_link_libraries(${PROJECT_NAME}
+  ${CMAKE_HOME_DIRECTORY}/deps/node/out/${CMAKE_BUILD_TYPE}/libnode.137.dylib -ldl -lpthread -lm)
 elseif (${ARCH} STREQUAL "X86_64") # build using node libraries
   target_link_libraries(${PROJECT_NAME}
   ${CMAKE_HOME_DIRECTORY}/deps/node/out/${CMAKE_BUILD_TYPE}/obj.target/libnode.so.79

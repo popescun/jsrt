@@ -3,13 +3,14 @@ const fs = require('fs');
 const execSync = require('child_process').execFileSync;
 const buildJSON = require('./build.json');
 const readline = require('readline');
+const { type } = require('os');
 
 //console.log(buildJSON);
 
 const CONFIG = buildJSON.configuration;
 
 // this is actually jsrt root dir
-const ROOT_DIR = process.cwd() + '/../';
+const ROOT_DIR = __dirname + '/../';
 utils.change_dir(ROOT_DIR);
 
 const cmdLineArgs = process.argv;
@@ -21,15 +22,16 @@ var buildType = 'Debug'
 const ARGUMENTS = {
   BUILD_TYPE: {
     DEBUG: 'Debug',
-    RELEASE: 'Release'
+    RELEASE: 'Release',
+    DESCRIPTION: 'Build dype'
   },
-  DEPS_UPDATE: ['deps-update', false],
-  NO_UNTANGLED: ['no-untangled', false],
-  V8_BUILD: ['v8-build', false],
-  USE_V8: ['use-v8', false],
-  CLEAN_BUILD: ['clean-build', false],
-  CLEAN_ALL: ['clean-all', false],
-  BUILD_ADDON: ['addon-build', false, '']
+  DEPS_UPDATE: ['deps-update', false, 'Pull and build dependencies before build'],
+  V8_BUILD: ['v8-build', false, 'Build V8 libraries'],
+  USE_V8: ['use-v8', false, 'Build using V8 libraries'],
+  CLEAN_BUILD: ['clean-build', false, 'Clean build directory'],
+  CLEAN_ALL: ['clean-all', false, 'Clean all, including dependecies'],
+  BUILD_ADDON: ['addon-build', false, 'Build the specified addon', "[sciter|dear_imgui]"],
+  HELP: ['help', false, 'Show command options'] 
 }
 Object.freeze(ARGUMENTS);
 
@@ -50,9 +52,6 @@ for (var idx in cmdLineArgs) {
     case ARGUMENTS.DEPS_UPDATE[0]:
       ARGUMENTS.DEPS_UPDATE[1] = true;
       break;
-    case ARGUMENTS.NO_UNTANGLED[0]:
-      ARGUMENTS.NO_UNTANGLED[1] = true;
-      break;
     case ARGUMENTS.V8_BUILD[0]:
       ARGUMENTS.V8_BUILD[1] = true;
       ARGUMENTS.USE_V8[1] = true;
@@ -68,13 +67,35 @@ for (var idx in cmdLineArgs) {
       break;
     case ARGUMENTS.BUILD_ADDON[0]:
       ARGUMENTS.BUILD_ADDON[1] = true;
-      ARGUMENTS.BUILD_ADDON[2] = param;
+      ARGUMENTS.BUILD_ADDON[3] = param;
+      break;
+    case ARGUMENTS.HELP[0]:
+      ARGUMENTS.HELP[1] = true;
       break;
     default:
       console.log('argument ' + arg + ' is unknown');
       process.exit();
       break;
   }
+}
+
+if (ARGUMENTS.HELP[1]) {
+  console.log("\ncommand options:\n");
+  // console.log(ARGUMENTS)
+  for (var idx in ARGUMENTS) {
+    // console.log(ARGUMENTS[idx])
+    if(ARGUMENTS[idx].constructor == Object) {
+      keys = Object.keys(ARGUMENTS[idx])
+      console.log('  ' + keys[0] + "," + keys[1] + ' - ' + ARGUMENTS[idx]['DESCRIPTION'] + '\n')
+    }
+    if(ARGUMENTS[idx] instanceof Array) {
+      // console.log('Array found');
+      args = ARGUMENTS[idx]
+      param = ARGUMENTS[idx][3] != null ? ARGUMENTS[idx][3] : ''
+      console.log('  ' + args[0] + param + ' - ' + args[2] + '\n')
+    }
+  }
+  process.exit();
 }
 
 const depsNames = Object.getOwnPropertyNames(buildJSON.dependencies);
@@ -126,10 +147,6 @@ for (var idx in buildJSON.configurations) {
 // get or update dependencies
 if (ARGUMENTS.DEPS_UPDATE[1]) {
   for (var depName in buildJSON.dependencies) {
-
-    if (depName === 'untangled' && ARGUMENTS.NO_UNTANGLED[1]) {
-      continue;
-    }
 
     var deps_obj = buildJSON.dependencies[depName];
 
@@ -221,7 +238,7 @@ if (ARGUMENTS.DEPS_UPDATE[1]) {
 // todo: copy v8 libs to pre-build for --use-prebuild build?
 
 // build addon
-let addonDir = ROOT_DIR + 'addons/' + ARGUMENTS.BUILD_ADDON[2];
+let addonDir = ROOT_DIR + 'addons/' + ARGUMENTS.BUILD_ADDON[4];
 if (ARGUMENTS.BUILD_ADDON[1]) {
   utils.change_dir(addonDir);
 }
@@ -237,12 +254,12 @@ if (!fs.existsSync(buildDir)){
 
 utils.change_dir(buildDir);
 if (ARGUMENTS.BUILD_ADDON[1]) {
-  utils.cmake_build(addonDir, buildType, CONFIG, arch, ARGUMENTS.USE_V8[1]);
+  utils.cmake_config(addonDir, buildType, CONFIG, arch, ARGUMENTS.USE_V8[1]);
 }
 else {
-  utils.cmake_build(ROOT_DIR, buildType, CONFIG, arch, ARGUMENTS.USE_V8[1]);
+  utils.cmake_config(ROOT_DIR, buildType, CONFIG, arch, ARGUMENTS.USE_V8[1]);
 }
-utils.make(arch);
+utils.cmake_build()
 
 
 

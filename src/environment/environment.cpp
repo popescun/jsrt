@@ -12,6 +12,9 @@ namespace
 
 namespace jsrt
 {
+
+using namespace v8;
+
 // public interface
 Environment::Environment() = default;
 Environment::~Environment() = default;
@@ -84,6 +87,6 @@ void Environment::CreateGlobalCoreObj()
 {
   V8_CONTEXT_SCOPE
   mGlobalCoreObj = Object::New(mIsolate);
-  mGlobalCtx->Global()->Set(mGlobalCtx, String::NewFromUtf8(mIsolate, "jsrtcore").ToLocalChecked(), mGlobalCoreObj);
+  (void)mGlobalCtx->Global()->Set(mGlobalCtx, String::NewFromUtf8(mIsolate, "jsrtcore").ToLocalChecked(), mGlobalCoreObj);
 }
 }

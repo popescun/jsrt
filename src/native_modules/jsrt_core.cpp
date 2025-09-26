@@ -85,7 +85,10 @@ void Bind(Handle<Object> obj)
   V8_CONTEXT_SCOPE
   std::cout << NAME << " Bind..." << std::endl;
 
-  v8_utils::BindJsToCppFunction(obj, "SetModulesDirectory", SetModulesDirectoryCbk);
+  if (obj.IsEmpty()) {
+    throw std::runtime_error("jsrt_core v8 Handle is empyt.");
+  }
+  v8_utils::BindJsToCppFunction(obj, "SetModulesDirectory", SetModulesDirectoryCbk); 
   v8_utils::BindJsToCppFunction(obj, "GetModulesDirectory", GetModulesDirectoryCbk);
   v8_utils::BindJsToCppFunction(obj, "OpenHandle", OpenHandleCbk);
   v8_utils::BindJsToCppFunction(obj, "OpenValue", OpenValueCbk);

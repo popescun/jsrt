@@ -5,7 +5,7 @@
 //jsrtcore.require = require;
 global.require = require;
 
-const MODULES_PARENT_DIR = __dirname;
+const MODULES_PARENT_DIR = __dirname + "/../../";
 jsrtcore.SetModulesDirectory(MODULES_PARENT_DIR);
 
 const mod = include('dummy');

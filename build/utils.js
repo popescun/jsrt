@@ -44,12 +44,19 @@ function exec(command, arguments) {
 }
 
 /**
- * @description Run cmake build command with arguments.
- * @param {*} build - build type: debug, release
- * @param {*} arch - architecture type: x86, x86_64
+ * @description Run cmake config command with arguments.
+ * @param {*} homeDir - CMakeLists.txt directory
+ * @param {*} buildType - build type: Debug, Release
+ * @param {*} config - additional config
+ * @param {*} arch - architecture type: x86, x86_64, macos_arm64
+ * @param {*} use_v8 - flag to build using V8 libs instead of node.js lib(that wraps V8 libs too)
  */
-function cmake_build(homeDir, buildType, config, arch, use_v8) {
-  exec('cmake', ['-DCMAKE_BUILD_TYPE=' + buildType, homeDir, '-DCONFIG:STRING=' + config, '-DARCH:STRING=' + arch.toUpperCase(),'-DUSE_V8:=' + use_v8.toString().toUpperCase()]);
+function cmake_config(homeDir, buildType, config, arch, use_v8) {
+  exec('cmake', ['-G Ninja','-DCMAKE_BUILD_TYPE=' + buildType, homeDir, '-DCONFIG:STRING=' + config, '-DARCH:STRING=' + arch.toUpperCase(),'-DUSE_V8:=' + use_v8.toString().toUpperCase()]);
+}
+
+function cmake_build() {
+  exec('cmake', ['--build','.','-j 8']);
 }
 
 function make(arch) {
@@ -57,7 +64,7 @@ function make(arch) {
     exec('make');
   }
   else {
-    exec('make', ['-j4']);
+    exec('make', ['-j 8']);
   }
 }
 
@@ -115,6 +122,7 @@ module.exports = {
   change_dir,
   git_clone_or_update,
   exec,
+  cmake_config,
   cmake_build,
   make,
   MsBuild,

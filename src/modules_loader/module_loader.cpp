@@ -5,6 +5,9 @@
 
 namespace jsrt
 {
+
+using namespace v8;
+
 static char JS_NATIVE_MODULES_PATH[] = "/jsrt_modules/native/";
 static char JS_MODULES_PATH[] = "/jsrt_modules/js/";
 
@@ -118,7 +121,7 @@ CPP_CALLBACK (Include)
       // todo: do this only for the includes in the start script run by node.js:
       // node.js assign variables to the local module, so they cannot be accessed through the global object (e.g from sciter script)
       // todo: investigate if necessary any more as node has a "global" object where we can keep module object references?
-      curCtx->Global()->Set(curCtx, String::NewFromUtf8(isol, moduleName.c_str()).ToLocalChecked(), localObj);
+      (void)curCtx->Global()->Set(curCtx, String::NewFromUtf8(isol, moduleName.c_str()).ToLocalChecked(), localObj);
     }
   }
   else // JS land module
@@ -155,9 +158,12 @@ void Module::RegisterBindAction(std::string name, actionT* action)
   }
 }
 
-void  Module::Bind(std::string name, v8::Handle<v8::Object> obj)
+void Module::Bind(std::string name, v8::Handle<v8::Object> obj)
 {
   // todo: check obj is valid
+  if (obj.IsEmpty()) {
+    throw std::runtime_error("Module::Bind v8 Handle is empyt.");
+  }
   actuatorBind.invokeAction(name, obj);
 }
 
