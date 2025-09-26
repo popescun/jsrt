@@ -1,6 +1,7 @@
 build/output
 node_modules
 .vscode
+.idea
 projects/Noot/Store/res/untitled/
 deps
 addons/dear_imgui/build
