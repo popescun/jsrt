@@ -23,7 +23,7 @@ const ARGUMENTS = {
   BUILD_TYPE: {
     DEBUG: 'Debug',
     RELEASE: 'Release',
-    DESCRIPTION: 'Build dype'
+    DESCRIPTION: 'Build type'
   },
   DEPS_UPDATE: ['deps-update', false, 'Pull and build dependencies before build'],
   V8_BUILD: ['v8-build', false, 'Build V8 libraries'],
