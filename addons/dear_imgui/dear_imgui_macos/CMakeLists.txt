@@ -57,10 +57,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/lib/${CMAKE_BUILD_TYP
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME}
+#todo: make a list of libs and feed once target_link_libraries()
+if (${USE_V8}) # build using direct v8 libraries
+# tbd
+else() # build using node libraries
+  target_link_libraries(${PROJECT_NAME}
   ${JSRT_DIR}/build/output/lib/macos_arm64/${CMAKE_BUILD_TYPE}/libjsrt.dylib
   ${JSRT_DIR}/deps/node/out/${CMAKE_BUILD_TYPE}/libnode.137.dylib
   -ldl -lpthread -lm glfw ${OPENGL_LIBRARIES})
+endif()
+  
 
 
 

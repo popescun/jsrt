@@ -48,12 +48,9 @@ endif()
 
 # cmake_policy(SET CMP0072 OLD)
 
-#todo: make a list of libs and feed once target_link_libraries()
-if (${USE_V8}) # build using direct v8 libraries
-elseif (${ARCH} STREQUAL "MACOS_ARM64")
+#todo: add other platforms
+if (${ARCH} STREQUAL "MACOS_ARM64")
   add_subdirectory(dear_imgui_macos)
-else() # build using node libraries
-
 endif()
 
 
