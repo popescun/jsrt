@@ -11,7 +11,10 @@ This was one of my old pet projects to demonstrate that a simple alternative to 
 - it uses a naive build system with the command tool and the configuration file in `build/build.js` and `build/build.json` respectively.
 - contains an experimental integration for `android` based on `termux`.
 
-## How to build 
+## How to build `jsrt` executable
+
+> [!WARNING]
+> Currently I'm building on latest `macOS`. For other platforms it requires adaptation.  
 
 You need to have `node.js` installed. From `build` directory run:
 ```shell
@@ -78,3 +81,8 @@ node build.js clean-build
 ```shell
 node build.js clean-all
 ```
+
+## How to build addons 
+### TBD
+
+
