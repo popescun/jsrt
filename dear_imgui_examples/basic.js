@@ -26,7 +26,7 @@ var textColor = new imgui.ImVec4(0.0, 0.8, 0.8, 1.0);
 const draw = () => {
 //const wsize1 = w1.framebufferSize;
 
-  imgui.ImGui_ImplOpenGL2_NewFrame();
+  // imgui.ImGui_ImplOpenGL2_NewFrame();
   imgui.ImGui_ImplGlfw_NewFrame();
   imgui.NewFrame();
 
@@ -53,6 +53,9 @@ const draw = () => {
 
   w1.makeCurrent();
   w1.swapBuffers();
+
+  // glfw.makeContextCurrent(w1.handle);
+  // glfw.swapBuffers(w1);
 
   glfw.pollEvents();
 };

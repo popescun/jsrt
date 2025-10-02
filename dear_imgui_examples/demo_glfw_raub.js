@@ -1,5 +1,7 @@
 'use strict';
 // invesigate: imgui needs to be included before glfw-raub?
+const MODULES_PARENT_DIR = __dirname + '/../';
+jsrtcore.SetModulesDirectory(MODULES_PARENT_DIR);
 const imgui = include('dear_imgui/dear_imgui_demo');
 const glfw = require('glfw-raub');
 
@@ -14,7 +16,7 @@ imgui.ImGui_ImplOpenGL2_Init();
 
 const draw = () => {
 
-  imgui.ImGui_ImplOpenGL2_NewFrame();
+  // imgui.ImGui_ImplOpenGL2_NewFrame();
   imgui.ImGui_ImplGlfw_NewFrame();
   imgui.NewFrame();
 

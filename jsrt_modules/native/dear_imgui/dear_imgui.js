@@ -4,7 +4,8 @@ var imgui_types = include('dear_imgui/dear_imgui_types');
 var imgui_widgets = include('dear_imgui/dear_imgui_widgets');
 var exports = {
 
-  addonPath : 'addons/dear_imgui/lib/Release/libdear_imgui_addon.so',
+  // addonPath : 'addons/dear_imgui/lib/Release/libdear_imgui_addon.so',
+  addonPath : 'addons/dear_imgui/lib/Debug/libdear_imgui_macos_addon.dylib',
 
   binding : {},
 

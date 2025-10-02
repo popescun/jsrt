@@ -1,9 +1,12 @@
-build/output
+build/*
 node_modules
 .vscode
 .idea
+.DS_Store
 projects/Noot/Store/res/untitled/
 deps
 addons/dear_imgui/build
 addons/dear_imgui/lib
 addons/sciter/build
+imgui.ini
+package*

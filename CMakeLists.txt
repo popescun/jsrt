@@ -20,8 +20,6 @@ if (${USE_V8}) # build using direct v8 libraries
   set(CMAKE_EXE_LINKER_FLAGS "-pie -Wl,--fatal-warnings -fPIC -Wl,-z,noexecstack -Wl,-z,now -Wl,-z,relro -Wl,-z,defs -Wl,--as-needed -fuse-ld=gold -B${CMAKE_HOME_DIRECTORY}/deps/v8/third_party/binutils/Linux_x64/Release/bin -Wl,--threads -Wl,--thread-count=4 -Wl,--icf=all -m64 -rdynamic -Wl,-rpath-link=. -Wl,--disable-new-dtags -Wl,-O2 -Wl,--gc-sections")
   add_definitions(-DWITH_V8)
 elseif (${ARCH} STREQUAL "MACOS_ARM64")
-  message(STATUS "MACOS_ARM64 architecture...")  
-  # message(FATAL_ERROR "ERROR...")  
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 elseif (${ARCH} STREQUAL "X86_64") # build using node libraries for x86_64
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -136,9 +134,12 @@ if (NOT ${USE_V8})
     # src/node/uv_worker_thread.cpp)
 endif()
 
+# build executable
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/build/output/bin/${CONFIG}/${CMAKE_BUILD_TYPE})
-
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
+# build library
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  ${CMAKE_HOME_DIRECTORY}/build/output/lib/${CONFIG}/${CMAKE_BUILD_TYPE})
 #add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} lower_build_type)
@@ -150,7 +151,6 @@ if (${USE_V8}) # build using direct v8 libraries
   ${CMAKE_HOME_DIRECTORY}/deps/v8/out.gn/x64.${lower_build_type}/obj/libv8_monolith.a
   -latomic -ldl -lpthread -lrt -lm)
 elseif (${ARCH} STREQUAL "MACOS_ARM64")
-  message(STATUS "MACOS_ARM64 architecture...")  
   target_link_libraries(${PROJECT_NAME}
   ${CMAKE_HOME_DIRECTORY}/deps/node/out/${CMAKE_BUILD_TYPE}/libnode.137.dylib -ldl -lpthread -lm)
 elseif (${ARCH} STREQUAL "X86_64") # build using node libraries

@@ -32,7 +32,8 @@ inline Isolate* CreateIsolate()
 #define CPP_SETTER_ACCESSOR(name) void name(Local<String> property, Local<Value> value, const PropertyCallbackInfo<void>& info)
 #define CPP_GETTER_ACCESSOR_NAME(name) void name(Local<Name> property, const PropertyCallbackInfo<Value>& info)
 #define CPP_SETTER_ACCESSOR_NAME(name) void name(Local<Name> property, Local<Value> value, const PropertyCallbackInfo<void>& info)
-#define CPP_CALLBACK(name) void name(const FunctionCallbackInfo<Value>& args)
+#define CPP_GETTER_ACCESSOR_NAME1(name) void name(Local<Function> property)
+#define CPP_CALLBACK(name) void name(const v8::FunctionCallbackInfo<v8::Value>& args)
 
 // binders for ObjectTemplate
 template<typename CallbackT>
@@ -73,7 +74,7 @@ void BindJsToCppAccessors(const Handle<Object>& obj,
 {
   auto isol = obj->GetIsolate();
   auto curCtx = isol->GetCurrentContext();
-  obj->SetAccessorProperty(curCtx, Local<Name>(String::NewFromUtf8(isol, JsVariable.c_str()).ToLocalChecked()), getter, setter);
+  obj->SetAccessorProperty(Local<Name>(String::NewFromUtf8(isol, JsVariable.c_str()).ToLocalChecked()), getter, setter);
 }
 
 inline std::string LoadJSFile(std::string path)

@@ -30,7 +30,7 @@ const ARGUMENTS = {
   USE_V8: ['use-v8', false, 'Build using V8 libraries'],
   CLEAN_BUILD: ['clean-build', false, 'Clean build directory'],
   CLEAN_ALL: ['clean-all', false, 'Clean all, including dependecies'],
-  BUILD_ADDON: ['addon-build', false, 'Build the specified addon', "[sciter|dear_imgui]"],
+  BUILD_ADDON: ['addon-build', false, 'Build the specified addon', ":[sciter|dear_imgui]"],
   HELP: ['help', false, 'Show command options'] 
 }
 Object.freeze(ARGUMENTS);
@@ -238,7 +238,7 @@ if (ARGUMENTS.DEPS_UPDATE[1]) {
 // todo: copy v8 libs to pre-build for --use-prebuild build?
 
 // build addon
-let addonDir = ROOT_DIR + 'addons/' + ARGUMENTS.BUILD_ADDON[4];
+let addonDir = ROOT_DIR + 'addons/' + ARGUMENTS.BUILD_ADDON[3];
 if (ARGUMENTS.BUILD_ADDON[1]) {
   utils.change_dir(addonDir);
 }
