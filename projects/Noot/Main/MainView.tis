@@ -1,8 +1,10 @@
-//var scriptDir = view.getDirName("app_pi");
-include view.GetModulesDirectory("app_api") + "/jsrt_modules/js/sciter/View.tis";
+//var scriptDir = view.getDirName("sciter");
+// include view.GetModulesDirectory("app_api") + "/jsrt_modules/js/sciter/View.tis";
+include "/Users/popescun/github/jsrt/jsrt_modules/js/sciter/View.tis";
 class MainView : Element {
   function attached {
     debug: "MainElement.attached...";
+    debug: "scriptDir:" + scriptDir;
     View();
   }
 }

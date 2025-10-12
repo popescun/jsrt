@@ -12,7 +12,7 @@ set(USE_V8 "FALSE" CACHE BOOL "Option to build using direct v8 libs")
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} lower_build_type)
 
-set(ARCH "MACOS_ARM64") 
+#set(ARCH "MACOS_ARM64")
 
 if (${USE_V8}) # build using direct v8 libraries
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -45,8 +45,6 @@ elseif (${ARCH} STREQUAL "ARM") # build using node libraries for arm
   -Wl,--no-whole-archive \
   -pthread")
 endif()
-
-# cmake_policy(SET CMP0072 OLD)
 
 #todo: add other platforms
 if (${ARCH} STREQUAL "MACOS_ARM64")

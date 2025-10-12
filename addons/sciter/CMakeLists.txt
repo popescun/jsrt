@@ -1,16 +1,14 @@
-project(sciter)
+cmake_minimum_required(VERSION 4.0.2)
 
-cmake_minimum_required(VERSION 3.5)
+project(sciter_addon)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(JSRT_DIR ${CMAKE_HOME_DIRECTORY}/../../)
 
-set(USE_V8 "TRUE" CACHE BOOL "Option to build using direct v8 libs")
+set(USE_V8 "FALSE" CACHE BOOL "Option to build using direct v8 libs")
 #message(FATAL_ERROR "USE_V8=${USE_V8}")
-
-string(TOLOWER ${CMAKE_BUILD_TYPE} lower_build_type)
 
 if (${USE_V8}) # build using direct v8 libraries
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,6 +16,7 @@ if (${USE_V8}) # build using direct v8 libraries
   set(CMAKE_CXX_FLAGS "-fPIC -fno-rtti -std=gnu++1y")
   set(CMAKE_EXE_LINKER_FLAGS "-pie -Wl,--fatal-warnings -fPIC -Wl,-z,noexecstack -Wl,-z,now -Wl,-z,relro -Wl,-z,defs -Wl,--as-needed -fuse-ld=gold -B${JSRT_DIR}/deps/v8/third_party/binutils/Linux_x64/Release/bin -Wl,--threads -Wl,--thread-count=4 -Wl,--icf=all -m64 -rdynamic -Wl,-rpath-link=. -Wl,--disable-new-dtags -Wl,-O2 -Wl,--gc-sections")
   add_definitions(-DWITH_V8)
+elseif (${ARCH} STREQUAL "MACOS_ARM64")
 elseif (${ARCH} STREQUAL "ARM64") # android
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   #rpath points to <internal storage>/Android/data
@@ -49,7 +48,9 @@ endif()
 
 if (${ARCH} STREQUAL "ARM64")
   add_subdirectory(sciter_android)
-else()
+elseif (${ARCH} STREQUAL "MACOS_ARM64")
+  add_subdirectory(sciter_macos)
+elseif (${ARCH} STREQUAL "X86_64")
   add_subdirectory(sciter_gtk)
   add_subdirectory(sciter_glfw)
 endif()

@@ -31,7 +31,6 @@ else() # build using node libraries
   ${JSRT_DIR}/deps/node/deps/v8/include
   ${JSRT_DIR}/deps/node/deps/uv/include
   ${JSRT_DIR}/deps/actuator
-#  ${JSRT_DIR}/deps/metal-cpp
   ${JSRT_DIR}/deps/dear_imgui
   ${JSRT_DIR}/deps/dear_imgui/backends
   ${JSRT_DIR}/deps/dear_imgui/examples)
@@ -62,7 +61,6 @@ if (${USE_V8}) # build using direct v8 libraries
 # tbd
 else() # build using node libraries
   target_link_libraries(${PROJECT_NAME}
-  ${JSRT_DIR}/build/output/lib/macos_arm64/${CMAKE_BUILD_TYPE}/libjsrt.dylib
   ${JSRT_DIR}/deps/node/out/${CMAKE_BUILD_TYPE}/libnode.137.dylib
   -ldl -lpthread -lm glfw ${OPENGL_LIBRARIES})
 endif()

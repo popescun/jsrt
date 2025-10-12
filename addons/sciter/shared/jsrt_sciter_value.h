@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <include/v8.h>
+#include <v8.h>
 #include <sciter-x.h>
 #include <vector>
 

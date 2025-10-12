@@ -1,91 +1,86 @@
-#include "jsrt_sciter_gtk.h"
 #include "jsrt_sciter_value.h"
+#include "jsrt_sciter_macos.hpp"
 
 #include <environment/environment.h>
-#include <utils/v8_utils.h>
+#include <v8_utils.h>
 
-#include <gtk/gtk.h>
+#include <sciter-x.h>
+
+#include <memory>
+
+#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
+#import <AppKit/NSApplication.h>
 
 int uimain(std::function<int()> init) {
   return 0;
 }
 
-void hook_uv(std::function<bool()> iterate_uv_cbk);
+namespace jsrt_sciter
+{
+constexpr char NAME[] = "sciter_macos";
 
-Local<Context> g_Context;
+v8::Local<v8::Context> g_Context;
 
 jsrt::Environment* g_env = nullptr;
 
-namespace jsrt_sciter
-{
-constexpr char NAME[] = "sciter_gtk";
 View* g_view = nullptr;
+NSApplication* g_application = nullptr;
 
 CPP_CALLBACK(initCbk)
 {
-  SciterSetOption(nullptr, SCITER_SET_SCRIPT_RUNTIME_FEATURES,
-    ALLOW_FILE_IO | ALLOW_SOCKET_IO | ALLOW_EVAL | ALLOW_SYSINFO );
+//  SciterSetOption(NULL,SCITER_SET_GFX_LAYER,1); // use this to force the engine to use CoreGraphics backend.
 
-  SciterSetOption(nullptr, SCITER_SET_UX_THEMING, true);
+    // enable features to be used from script
+  SciterSetOption(NULL, SCITER_SET_SCRIPT_RUNTIME_FEATURES,
+                    ALLOW_FILE_IO |
+                    ALLOW_SOCKET_IO |
+                    ALLOW_EVAL |
+                    ALLOW_SYSINFO );
 
-  /* Initialize GTK+ */
-  g_log_set_handler ("Gtk", G_LOG_LEVEL_WARNING, (GLogFunc) gtk_false, nullptr);
 
-#if 0
-  hook_uv(g_env->mIteateEventLoop);
-#endif
-
-  gtk_init (nullptr, nullptr);
-
-  g_log_set_handler ("Gtk", G_LOG_LEVEL_WARNING, g_log_default_handler, nullptr);
-}
-
-CPP_CALLBACK(setDebugModeCbk)
-{
-  SciterSetOption(g_view != nullptr ? g_view->get_hwnd() : nullptr,
-    SCITER_SET_DEBUG_MODE, true);
-}
-
-CPP_CALLBACK(main_iterationCbk)
-{
-  if (g_view->get_hwnd())
-  {
-    gtk_main_iteration();
-  }
-}
-
-CPP_CALLBACK(loopCbk)
-{
-  std::cout << "gtk_main" << std::endl;
-  gtk_main();
+    g_application = [NSApplication sharedApplication];
+//    NSArray *tl;
+//    [[NSBundle mainBundle] loadNibNamed:@"MainMenu" owner:application topLevelObjects:&tl];
+//
+//    sciter::archive::instance().open(aux::elements_of(sciter_resources)); // bind resources[] (defined in "resources.cpp") with the archive
 }
 
 CPP_CALLBACK(createViewCbk)
 {
+  RECT frame;
+  frame.top = 100;
+  frame.left = 100;
+  frame.right = 100 + 800;
+  frame.bottom = 100 + 600;
   g_view = new View();
-  sciter::hook_uv(g_view->get_hwnd(), g_view);
 }
 
-CPP_CALLBACK(existViewCbk)
+CPP_CALLBACK(setDebugModeCbk)
 {
-  args.GetReturnValue().Set(g_view->get_hwnd() != nullptr);
+  SciterSetOption(nullptr, SCITER_SET_DEBUG_MODE, true);
 }
 
 CPP_CALLBACK(loadFileCbk)
 {
   auto isol = args.GetIsolate();
   char16_t buf[2048] = {0};
-  int copied = args[0].As<String>()->Write(
+  int copied = args[0].As<v8::String>()->Write(
                                 isol,
                                 reinterpret_cast<uint16_t*>(buf),
                                 0,
                                 sizeof(buf) - 1,
-                                String::NO_NULL_TERMINATION);
+                                v8::String::NO_NULL_TERMINATION);
   buf[copied] = '\0';
   std::replace(&buf[0], &buf[copied], '\\', '/');
   sciter::string url = WSTR("file://");
   url += LPCWSTR(buf);
   auto ret = g_view->load_file(url.c_str());
+}
+
+CPP_CALLBACK(runCbk)
+{
+  [g_application run];
 }
 
 CPP_CALLBACK(expandCbk)
@@ -94,7 +89,7 @@ CPP_CALLBACK(expandCbk)
   auto maximize = false;
   if (args.Length() == 1)
   {
-    maximize = Boolean::Cast(*args[0])->Value();
+    maximize = v8::Boolean::Cast(*args[0])->Value();
     g_view->window::expand(maximize);
   }
   g_view->window::expand(maximize);
@@ -127,8 +122,8 @@ CPP_CALLBACK(callCbk)
   args.GetReturnValue().Set(sciterToJsValue(isol, ret));
 }
 
-View::View() :
-  window(SW_TITLEBAR | SW_RESIZEABLE | SW_CONTROLS | SW_MAIN | SW_GLASSY | SW_ENABLE_DEBUG)
+View::View(RECT frame) :
+  window(SW_TITLEBAR | SW_RESIZEABLE | SW_MAIN | SW_ENABLE_DEBUG, frame)
 {
 }
 
@@ -151,7 +146,7 @@ bool View::handle_scripting_call(HELEMENT he, SCRIPTING_METHOD_PARAMS& params)
   // get js exported sciter object name
   auto sciterJsName_ws = params.argv[0].to_string();
   std::string sciterJsName(sciterJsName_ws.begin(), sciterJsName_ws.end());
-  Local<Value> propertyVal;
+  v8::Local<v8::Value> propertyVal;
   if (v8_utils::GetObjectProperty(g_Context->Global(), sciterJsName.c_str(), propertyVal))
   {
     if (propertyVal->IsNull())
@@ -175,7 +170,7 @@ bool View::handle_scripting_call(HELEMENT he, SCRIPTING_METHOD_PARAMS& params)
   return true;
 }
 
-extern "C" void Bind(Handle<Object> obj, jsrt::Environment* env)
+extern "C" void Bind(v8::Handle<v8::Object> obj, jsrt::Environment* env)
 {
   v8::Context::Scope ctxScope(env->mGlobalCtx);
 
@@ -186,12 +181,9 @@ extern "C" void Bind(Handle<Object> obj, jsrt::Environment* env)
 
   // sciter
   v8_utils::BindJsToCppFunction(obj, "init", initCbk);
-  v8_utils::BindJsToCppFunction(obj, "setDebugMode", setDebugModeCbk);
-  v8_utils::BindJsToCppFunction(obj, "main_iteration", main_iterationCbk);
-  v8_utils::BindJsToCppFunction(obj, "loop", loopCbk);
   v8_utils::BindJsToCppFunction(obj, "createView", createViewCbk);
-  v8_utils::BindJsToCppFunction(obj, "existView", existViewCbk);
   v8_utils::BindJsToCppFunction(obj, "loadFile", loadFileCbk);
+  v8_utils::BindJsToCppFunction(obj, "run", runCbk);
   v8_utils::BindJsToCppFunction(obj, "expand", expandCbk);
   v8_utils::BindJsToCppFunction(obj, "collapse", collapseCbk);
   v8_utils::BindJsToCppFunction(obj, "dismiss", dismissCbk);
