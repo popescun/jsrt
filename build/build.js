@@ -27,7 +27,7 @@ const ARGUMENTS = {
   },
   DEPS_UPDATE: ['deps-update', false, 'Pull and build dependencies before build'],
   V8_BUILD: ['v8-build', false, 'Build V8 libraries'],
-  USE_V8: ['use-v8', false, 'Build using V8 libraries'],
+  USE_V8: ['use-v8', false, 'Build using V8 libraries. WARNING: it is not available at the moment!'],
   CLEAN_BUILD: ['clean-build', false, 'Clean build directory'],
   CLEAN_ALL: ['clean-all', false, 'Clean all, including dependecies'],
   BUILD_ADDON: ['addon-build', false, 'Build the specified addon', ":[sciter|dear_imgui]"],
