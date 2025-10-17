@@ -35,7 +35,7 @@ command options:
 
   v8-build - Build V8 libraries
 
-  use-v8 - Build using V8 libraries
+  use-v8 - Build using V8 libraries. WARNING: it is not available at the moment!
 
   clean-build - Clean build directory
 
