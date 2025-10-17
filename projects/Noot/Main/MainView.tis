@@ -4,7 +4,7 @@ include "/Users/popescun/github/jsrt/jsrt_modules/js/sciter/View.tis";
 class MainView : Element {
   function attached {
     debug: "MainElement.attached...";
-    debug: "scriptDir:" + scriptDir;
+    // debug: "scriptDir:" + scriptDir;
     View();
   }
 }

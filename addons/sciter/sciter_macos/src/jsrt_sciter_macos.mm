@@ -32,18 +32,12 @@ CPP_CALLBACK(initCbk)
 //  SciterSetOption(NULL,SCITER_SET_GFX_LAYER,1); // use this to force the engine to use CoreGraphics backend.
 
     // enable features to be used from script
-  SciterSetOption(NULL, SCITER_SET_SCRIPT_RUNTIME_FEATURES,
-                    ALLOW_FILE_IO |
-                    ALLOW_SOCKET_IO |
-                    ALLOW_EVAL |
-                    ALLOW_SYSINFO );
+  SciterSetOption(nullptr, SCITER_SET_SCRIPT_RUNTIME_FEATURES,
+    ALLOW_FILE_IO | ALLOW_SOCKET_IO | ALLOW_EVAL | ALLOW_SYSINFO );
 
 
     g_application = [NSApplication sharedApplication];
-//    NSArray *tl;
-//    [[NSBundle mainBundle] loadNibNamed:@"MainMenu" owner:application topLevelObjects:&tl];
-//
-//    sciter::archive::instance().open(aux::elements_of(sciter_resources)); // bind resources[] (defined in "resources.cpp") with the archive
+//    [g_application activateIgnoringOtherApps:YES];
 }
 
 CPP_CALLBACK(createViewCbk)
@@ -74,14 +68,18 @@ CPP_CALLBACK(loadFileCbk)
   buf[copied] = '\0';
   std::replace(&buf[0], &buf[copied], '\\', '/');
   sciter::string url = WSTR("file://");
-  url += LPCWSTR(buf);
-  auto ret = g_view->load_file(url.c_str());
+  url +=  LPCWSTR(buf);
+//  auto ret = g_view->load_file(url.c_str());
+  g_view->load(url.c_str());
 }
 
 CPP_CALLBACK(runCbk)
 {
   [g_application run];
 }
+
+NSView*   nsview(HWINDOW hwnd) { return (__bridge NSView*) hwnd; }
+NSWindow* nswindow(HWINDOW hwnd) { return hwnd ? [nsview(hwnd) window]:nullptr; }
 
 CPP_CALLBACK(expandCbk)
 {
@@ -93,6 +91,8 @@ CPP_CALLBACK(expandCbk)
     g_view->window::expand(maximize);
   }
   g_view->window::expand(maximize);
+//  [nswindow(g_view->get_hwnd()) makeKeyAndOrderFront:nil];
+  [nswindow(g_view->get_hwnd()) orderFrontRegardless];
 }
 
 CPP_CALLBACK(collapseCbk)

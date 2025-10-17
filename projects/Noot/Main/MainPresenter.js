@@ -46,6 +46,7 @@ var exports = {
     }
 
     global.sciter_main.slide_menu = function(reason) {
+      console.log('MainPresenter.slide_menu...');
       presenter.sendEvent.call({from: "MAIN", to: "TOOLBAR", type: "SLIDE_MENU"});
     }
 

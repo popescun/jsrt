@@ -1,8 +1,9 @@
 'use strict';
 var exports = {
 
-  addonPath : 'addons/sciter/build/output/lib/macos_arm64/Debug/libsciter_macos_addon.dylib',
-
+  // addonPath : 'addons/sciter/build/output/lib/macos_arm64/Debug/libsciter_macos_addon.dylib',
+  addonPath : 'addons/sciter/build/output/lib/Debug/Debug/libsciter_macos_addon.dylib',
+  
   binding : {},
 
   init : function() {
@@ -15,10 +16,6 @@ var exports = {
 
   createView : function() {
     this.binding.createView();
-  },
-
-  existView : function() {
-    return this.binding.existView();
   },
 
   loadFile : function(file) {
