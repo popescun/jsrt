@@ -4,7 +4,6 @@
 #include <functional>
 #include <include/v8.h>
 #include <actuator/actuator.hpp>
-#include <map>
 
 namespace jsrt
 {

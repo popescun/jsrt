@@ -5,8 +5,6 @@
 #include <stdio.h>
 #include <dirent.h>
 
-#include <iostream>
-
 int main(int argc, char* argv[])
 {
 #ifdef WITH_V8
