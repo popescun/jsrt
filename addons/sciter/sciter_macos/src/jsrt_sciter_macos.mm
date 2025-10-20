@@ -29,24 +29,22 @@ NSApplication* g_application = nullptr;
 
 CPP_CALLBACK(initCbk)
 {
-//  SciterSetOption(NULL,SCITER_SET_GFX_LAYER,1); // use this to force the engine to use CoreGraphics backend.
-
-    // enable features to be used from script
-  SciterSetOption(nullptr, SCITER_SET_SCRIPT_RUNTIME_FEATURES,
-    ALLOW_FILE_IO | ALLOW_SOCKET_IO | ALLOW_EVAL | ALLOW_SYSINFO );
-
-
-    g_application = [NSApplication sharedApplication];
-//    [g_application activateIgnoringOtherApps:YES];
+  g_application = [NSApplication sharedApplication];
+  NSArray *tl;
+  auto mb = [NSBundle mainBundle];
+  [mb loadNibNamed:@"MainMenu" owner:g_application topLevelObjects:&tl];
 }
 
 CPP_CALLBACK(createViewCbk)
 {
-  RECT frame;
-  frame.top = 100;
-  frame.left = 100;
-  frame.right = 100 + 800;
-  frame.bottom = 100 + 600;
+    // enable features to be used from script
+  SciterSetOption(nullptr, SCITER_SET_SCRIPT_RUNTIME_FEATURES,
+    ALLOW_FILE_IO | ALLOW_SOCKET_IO | ALLOW_EVAL | ALLOW_SYSINFO );
+//
+//#ifdef WINDOWS
+//  SciterSetOption(NULL, SCITER_SET_GFX_LAYER, GFX_LAYER_D2D);
+//#endif // WINDOWS
+
   g_view = new View();
 }
 
@@ -69,7 +67,6 @@ CPP_CALLBACK(loadFileCbk)
   std::replace(&buf[0], &buf[copied], '\\', '/');
   sciter::string url = WSTR("file://");
   url +=  LPCWSTR(buf);
-//  auto ret = g_view->load_file(url.c_str());
   g_view->load(url.c_str());
 }
 
@@ -83,26 +80,19 @@ NSWindow* nswindow(HWINDOW hwnd) { return hwnd ? [nsview(hwnd) window]:nullptr; 
 
 CPP_CALLBACK(expandCbk)
 {
-  auto isol = args.GetIsolate();
-  auto maximize = false;
-  if (args.Length() == 1)
-  {
-    maximize = v8::Boolean::Cast(*args[0])->Value();
-    g_view->window::expand(maximize);
-  }
-  g_view->window::expand(maximize);
+  g_view->expand();
 //  [nswindow(g_view->get_hwnd()) makeKeyAndOrderFront:nil];
-  [nswindow(g_view->get_hwnd()) orderFrontRegardless];
+//  [nswindow(g_view->get_hwnd()) orderFrontRegardless];
 }
 
 CPP_CALLBACK(collapseCbk)
 {
-  g_view->window::collapse();
+  g_view->collapse();
 }
 
 CPP_CALLBACK(dismissCbk)
 {
-  g_view->window::dismiss();
+  g_view->dismiss();
 }
 
 CPP_CALLBACK(callCbk)
@@ -122,8 +112,8 @@ CPP_CALLBACK(callCbk)
   args.GetReturnValue().Set(sciterToJsValue(isol, ret));
 }
 
-View::View(RECT frame) :
-  window(SW_TITLEBAR | SW_RESIZEABLE | SW_MAIN | SW_ENABLE_DEBUG, frame)
+View::View() :
+  window(SW_TITLEBAR | SW_RESIZEABLE | SW_CONTROLS | SW_MAIN | SW_GLASSY)
 {
 }
 
@@ -181,6 +171,7 @@ extern "C" void Bind(v8::Handle<v8::Object> obj, jsrt::Environment* env)
 
   // sciter
   v8_utils::BindJsToCppFunction(obj, "init", initCbk);
+    v8_utils::BindJsToCppFunction(obj, "setDebugMode", setDebugModeCbk);
   v8_utils::BindJsToCppFunction(obj, "createView", createViewCbk);
   v8_utils::BindJsToCppFunction(obj, "loadFile", loadFileCbk);
   v8_utils::BindJsToCppFunction(obj, "run", runCbk);

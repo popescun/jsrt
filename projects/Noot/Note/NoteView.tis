@@ -349,6 +349,7 @@ class DivTabs : Element {
       var table = insertedNodes[0];
       var firstTextPos = table.$(td).firstCaretPos;
       this.state.focus = true;
+      this.state.readonly = false;
       this.selection.select(firstTextPos);                    // move caret to pos
       return true;
     }
@@ -409,6 +410,7 @@ class DivTabs : Element {
       var img = insertedNodes[0];
       this.selection.select(img.lastCaretPos,img.lastCaretPos);  // set caret after image
       this.state.focus = true;
+      this.state.readonly = false;
       return true;
     }
 
@@ -466,6 +468,7 @@ class DivTabs : Element {
     var tab = $(tabs.notes).currentTab;
     if (tab) {
       tab.select('htmlarea').state.focus = true;
+      tab.select('htmlarea').state.readonly = false;
     }
   }
 }

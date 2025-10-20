@@ -34,8 +34,6 @@ presenters.init(sciter, fluxDispatcher, appController);
 // subscribe presenters to stores
 store.subscribeCallbacks(presenters);
 
-sciter.init();
-
 sciter.getDirName = function() {
   return __dirname;
 }
@@ -46,9 +44,12 @@ global.app_api.GetModulesDirectory = function() {
   return jsrtcore.GetModulesDirectory();
 }
 
-//sciter.setDebugMode();
+sciter.init();
+
+sciter.setDebugMode();
 
 sciter.createView();
+
 sciter.loadFile(__dirname + '/../Main/MainView.htm');
 
 // UI is ready we can initialize it
