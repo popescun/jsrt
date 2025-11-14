@@ -3,7 +3,7 @@
 This was one of my old pet projects to demonstrate that a simple alternative to the `node.js` `CommonJS` module system using `require` function is possible.
 
 ## Features:
-- introduce a new module loading function `include`. The new nodule system can work with both Java Script modules and native ones.
+- introduce a new module loading function `include`. The new module system can work with both Java Script modules and native ones.
 - there are several new modules provided in `jsrt_modules`: the native modules includes `dear_imgui` and `sciter`(TI version) bindings. The JS modules includes a a simplistic `flux` module for building application with flux architecture.
 - it can build using either `V8` libs or `libnode` library(that encompasses `V8` libs)
 - integrate `node.js` runtime so all existent `npm` modules are usable.
