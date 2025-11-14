@@ -83,6 +83,18 @@ node build.js clean-all
 ```
 
 ## How to build addons 
-### TBD
+Currently there are provided only two addons(bidings) to [sciter TIS](https://github.com/c-smile/sciter-sdk.git) and 
+[imgui](https://github.com/ocornut/imgui.git)(incomplete! though interesting). However, it's so much fun to create new bindings, provided you have a little C++ knowledge, and leverege them in `JS`.  
+```shell
+node build.js Release addon-build:sciter
+```
+
+## Create new modules
+New modules should be placed in [jsrt_modules](https://github.com/popescun/jsrt/tree/main/jsrt_modules) to:
+  - [js](https://github.com/popescun/jsrt/tree/main/jsrt_modules/js) for pure js modules
+  - [native](https://github.com/popescun/jsrt/tree/main/jsrt_modules/native) for addons
+
+`jsrt` will load all modules found at these locations during start-up.
+
 
 
