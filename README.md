@@ -1,11 +1,11 @@
 ## Java Script runtime environment based on V8 JS engine
 
-This was one of my old pet projects to demonstrate that a simple alternative to the `node.js` `CommonJS` module system using `require` function is possible.
+My motivation was to learn how to implement a complete module system for `JS`. It turned out to be less complex than in `node.js`.
 
 ## Features:
 - introduce a new module loading function `include`. The new module system can work with both Java Script modules and native ones.
 - there are several new modules provided in `jsrt_modules`: the native modules includes `dear_imgui` and `sciter`(TI version) bindings. The JS modules includes a a simplistic `flux` module for building application with flux architecture.
-- it can build using either `V8` libs or `libnode` library(that encompasses `V8` libs)
+- it can build using either `V8` libs or `libnode` library(that encompasses `V8` libs).
 - integrate `node.js` runtime so all existent `npm` modules are usable.
 - there is included an almost full fledged application in `projects/Noot`. It is a notes editor build on top of `sciter` engine. This application makes use of `flux` module.
 - it uses a naive build system with the command tool and the configuration file in `build/build.js` and `build/build.json` respectively.
