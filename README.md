@@ -29,7 +29,7 @@ node build.js help
 ```shell
 command options:
 
-  DEBUG,RELEASE - Build dype
+  DEBUG,RELEASE - Build type
 
   deps-update - Pull and build dependencies before build
 
@@ -39,7 +39,7 @@ command options:
 
   clean-build - Clean build directory
 
-  clean-all - Clean all, including dependecies
+  clean-all - Clean all, including dependencies
 
   addon-build[sciter|dear_imgui] - Build the specified addon
 
@@ -83,14 +83,14 @@ node build.js clean-all
 ```
 
 ## How to build addons 
-Currently there are provided only two addons(bidings) to [sciter TIS](https://github.com/c-smile/sciter-sdk.git) and 
-[imgui](https://github.com/ocornut/imgui.git)(incomplete! though interesting). However, it's so much fun to create new bindings, provided you have a little C++ knowledge, and leverege them in `JS`.  
+Currently there are provided only two addons(bindings) to [sciter TIS](https://github.com/c-smile/sciter-sdk.git) and 
+[imgui](https://github.com/ocornut/imgui.git)(incomplete! though interesting). However, it's so much fun to create new bindings, provided you have a little C++ knowledge, and leverage them in `JS`.  
 ```shell
 node build.js Release addon-build:sciter
 ```
 
 ## Create new modules
-New modules should be placed in [jsrt_modules](https://github.com/popescun/jsrt/tree/main/jsrt_modules) to:
+New modules should be placed into [jsrt_modules](https://github.com/popescun/jsrt/tree/main/jsrt_modules) sub-folders:
   - [js](https://github.com/popescun/jsrt/tree/main/jsrt_modules/js) for pure js modules
   - [native](https://github.com/popescun/jsrt/tree/main/jsrt_modules/native) for addons
 

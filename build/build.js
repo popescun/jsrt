@@ -29,7 +29,7 @@ const ARGUMENTS = {
   V8_BUILD: ['v8-build', false, 'Build V8 libraries'],
   USE_V8: ['use-v8', false, 'Build using V8 libraries. WARNING: it is not available at the moment!'],
   CLEAN_BUILD: ['clean-build', false, 'Clean build directory'],
-  CLEAN_ALL: ['clean-all', false, 'Clean all, including dependecies'],
+  CLEAN_ALL: ['clean-all', false, 'Clean all, including dependencies'],
   BUILD_ADDON: ['addon-build', false, 'Build the specified addon', ":[sciter|dear_imgui]"],
   HELP: ['help', false, 'Show command options'] 
 }
